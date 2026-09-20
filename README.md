@@ -65,7 +65,10 @@ pnpm test          # vitest
 pnpm build         # tsdown, ESM and CJS
 pnpm typecheck     # tsc --noEmit
 pnpm docs          # Vite docs app
+pnpm compare:data  # check the subunit data against CLDR and ISO 4217
 ```
+
+The docs deploy to GitHub Pages from `main` via `.github/workflows/pages.yml`. Enable Pages with "GitHub Actions" as the source in the repository settings.
 
 ## Status
 
