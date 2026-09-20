@@ -1,4 +1,4 @@
-import type { PluralForms } from "./types.js";
+import type { PluralCategory, PluralForms } from "./types.js";
 
 /** Canonicalize a BCP 47 tag, falling back to the runtime locale. */
 export function canonicalLocale(locale?: string): string {
@@ -65,7 +65,6 @@ export function formatInteger(locale: string, value: bigint): string {
   return new Intl.NumberFormat(locale, { useGrouping: true, maximumFractionDigits: 0 }).format(value);
 }
 
-export function selectPlural(locale: string, value: bigint): "one" | "other" {
-  const category = new Intl.PluralRules(locale).select(Number(value));
-  return category === "one" ? "one" : "other";
+export function selectPlural(locale: string, value: bigint): PluralCategory {
+  return new Intl.PluralRules(locale).select(Number(value)) as PluralCategory;
 }

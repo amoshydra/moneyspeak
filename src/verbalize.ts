@@ -96,7 +96,7 @@ function scale(amount: number | string | bigint, exponent: number): Scaled {
 }
 
 function pick(forms: PluralForms, locale: string, value: bigint): string {
-  return selectPlural(locale, value) === "one" ? forms.one : forms.other;
+  return forms[selectPlural(locale, value)] ?? forms.other;
 }
 
 function minorNumber(locale: string, minor: bigint): string {

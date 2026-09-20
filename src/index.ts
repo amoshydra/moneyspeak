@@ -3,6 +3,7 @@ export { parseMoney } from "./parse.js";
 export type {
   MoneyInput,
   ParsedMoney,
+  PluralCategory,
   PluralForms,
   ResolvedCurrency,
   Result,

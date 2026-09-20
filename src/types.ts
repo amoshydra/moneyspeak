@@ -22,10 +22,12 @@ export interface VerbalizeOptions {
   locale?: string;
 }
 
-export interface PluralForms {
-  one: string;
-  other: string;
-}
+export type PluralCategory = "zero" | "one" | "two" | "few" | "many" | "other";
+
+/** CLDR plural forms. `other` is required; the rest depend on the locale. */
+export type PluralForms = { other: string } & Partial<
+  Record<Exclude<PluralCategory, "other">, string>
+>;
 
 export type Source = "intl" | "data";
 

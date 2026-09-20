@@ -49,10 +49,10 @@ function updateDemo(): void {
     outStrategy.textContent = result.strategy;
     outSpoken.textContent = result.spoken;
     outDisplay.textContent = result.display;
-    outName.textContent = `${resolved.name.one} / ${resolved.name.other}`;
+    outName.textContent = `${resolved.name.one ?? resolved.name.other} / ${resolved.name.other}`;
     outExponent.textContent = String(resolved.exponent);
     outSubunit.textContent = resolved.subunit
-      ? `${resolved.subunit.one} / ${resolved.subunit.other}`
+      ? `${resolved.subunit.one ?? resolved.subunit.other} / ${resolved.subunit.other}`
       : "none (no minor unit)";
     outSources.textContent = Object.entries(resolved.sources)
       .map(([key, source]) => `${key}: ${source}`)

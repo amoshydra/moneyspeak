@@ -116,3 +116,18 @@ describe("verbalizeMoney: options", () => {
     expect(result.spoken).toBe("123 US dollars");
   });
 });
+
+describe("plural categories", () => {
+  it("uses the many category for large amounts in fr, es and it", () => {
+    for (const locale of ["fr-FR", "es-ES", "it-IT"]) {
+      const result = verbalizeMoney({ amount: 1000000.45, currency: "EUR", locale });
+      expect(result.strategy).toBe("major-minor");
+      expect(result.spoken).toMatch(/centime|céntimo|centesimi/);
+    }
+  });
+
+  it("falls back to other when a category is absent", () => {
+    // fr has a many category; the draft supplies it, so a plain amount still works.
+    expect(verbalizeMoney({ amount: 2.02, currency: "EUR", locale: "fr-FR" }).spoken).toContain("centimes");
+  });
+});

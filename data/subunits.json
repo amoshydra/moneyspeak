@@ -1,15 +1,15 @@
 {
   "_meta": {
     "status": "draft",
-    "note": "Subunit names are not in CLDR. Each entry is a claim and should be checked against the currency's issuing authority and the locale's usage before release. Keys are ISO 4217 codes, then BCP 47 language subtags."
+    "note": "Subunit names are not in CLDR. Each entry is a claim and should be checked against the currency's issuing authority and the locale's usage before release. Keys are ISO 4217 codes, then BCP 47 language subtags. Plural keys follow CLDR categories; run scripts/compare-data.mjs to check coverage."
   },
   "subunits": {
     "USD": {
       "en": { "one": "cent", "other": "cents" },
       "de": { "one": "Cent", "other": "Cent" },
-      "fr": { "one": "cent", "other": "centimes" },
-      "es": { "one": "centavo", "other": "centavos" },
-      "it": { "one": "centesimo", "other": "centesimi" },
+      "fr": { "one": "cent", "many": "centimes", "other": "centimes" },
+      "es": { "one": "centavo", "many": "centavos", "other": "centavos" },
+      "it": { "one": "centesimo", "many": "centesimi", "other": "centesimi" },
       "nl": { "one": "cent", "other": "cent" },
       "id": { "one": "sen", "other": "sen" },
       "ms": { "one": "sen", "other": "sen" },
@@ -21,9 +21,9 @@
     "EUR": {
       "en": { "one": "cent", "other": "cents" },
       "de": { "one": "Cent", "other": "Cent" },
-      "fr": { "one": "centime", "other": "centimes" },
-      "es": { "one": "céntimo", "other": "céntimos" },
-      "it": { "one": "centesimo", "other": "centesimi" },
+      "fr": { "one": "centime", "many": "centimes", "other": "centimes" },
+      "es": { "one": "céntimo", "many": "céntimos", "other": "céntimos" },
+      "it": { "one": "centesimo", "many": "centesimi", "other": "centesimi" },
       "nl": { "one": "cent", "other": "cent" }
     },
     "GBP": {
@@ -71,15 +71,15 @@
     },
     "CAD": {
       "en": { "one": "cent", "other": "cents" },
-      "fr": { "one": "cent", "other": "cents" }
+      "fr": { "one": "cent", "many": "cents", "other": "cents" }
     },
     "NZD": {
       "en": { "one": "cent", "other": "cents" }
     },
     "CHF": {
       "de": { "one": "Rappen", "other": "Rappen" },
-      "fr": { "one": "centime", "other": "centimes" },
-      "it": { "one": "centesimo", "other": "centesimi" },
+      "fr": { "one": "centime", "many": "centimes", "other": "centimes" },
+      "it": { "one": "centesimo", "many": "centesimi", "other": "centesimi" },
       "en": { "one": "centime", "other": "centimes" }
     },
     "ZAR": {
