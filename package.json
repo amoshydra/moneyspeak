@@ -1,0 +1,69 @@
+{
+  "name": "moneyspeak",
+  "version": "0.1.0",
+  "description": "Verbalize currency amounts for speech synthesizers. Derive the spoken form from Intl; patch only the gaps.",
+  "keywords": [
+    "currency",
+    "accessibility",
+    "a11y",
+    "screen-reader",
+    "tts",
+    "text-to-speech",
+    "i18n",
+    "intl",
+    "cldr"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "data",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./dom": {
+      "import": {
+        "types": "./dist/dom.d.mts",
+        "default": "./dist/dom.mjs"
+      },
+      "require": {
+        "types": "./dist/dom.d.cts",
+        "default": "./dist/dom.cjs"
+      }
+    },
+    "./data/subunits.json": "./data/subunits.json",
+    "./data/overrides.json": "./data/overrides.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "docs": "vite docs",
+    "docs:build": "vite build docs"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "tsdown": "^0.23.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
+  }
+}

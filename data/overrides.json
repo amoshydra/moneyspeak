@@ -1,0 +1,30 @@
+{
+  "_meta": {
+    "status": "draft",
+    "note": "Only the entries where the value derived from Intl is missing or reads badly. Everything else is derived at runtime."
+  },
+  "exponent": {
+    "IDR": 2
+  },
+  "names": {
+    "id-ID": { "USD": "dolar Amerika" }
+  },
+  "locales": {
+    "en": { "connector": "and", "split": true },
+    "de": { "connector": "und", "split": true },
+    "fr": { "connector": "et", "split": true },
+    "es": { "connector": "y", "split": true },
+    "it": { "connector": "e", "split": true },
+    "nl": { "connector": "en", "split": true },
+    "sv": { "connector": "och", "split": true },
+    "nb": { "connector": "og", "split": true },
+    "da": { "connector": "og", "split": true },
+    "id": { "connector": "", "split": true },
+    "ms": { "connector": "", "split": true },
+    "ta": { "connector": "", "split": true },
+    "zh": { "connector": "", "split": false },
+    "ja": { "connector": "", "split": false },
+    "th": { "connector": "", "split": false },
+    "yue": { "connector": "", "split": false }
+  }
+}
