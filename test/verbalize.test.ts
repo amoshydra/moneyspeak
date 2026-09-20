@@ -130,4 +130,10 @@ describe("plural categories", () => {
     // fr has a many category; the draft supplies it, so a plain amount still works.
     expect(verbalizeMoney({ amount: 2.02, currency: "EUR", locale: "fr-FR" }).spoken).toContain("centimes");
   });
+
+  it("uses cents, not centimes, for the French dollar cent", () => {
+    const result = verbalizeMoney({ amount: 1.05, currency: "USD", locale: "fr-FR" });
+    expect(result.spoken).toContain("cents");
+    expect(result.spoken).not.toContain("centimes");
+  });
 });

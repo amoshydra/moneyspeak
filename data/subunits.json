@@ -7,7 +7,7 @@
     "USD": {
       "en": { "one": "cent", "other": "cents" },
       "de": { "one": "Cent", "other": "Cent" },
-      "fr": { "one": "cent", "many": "centimes", "other": "centimes" },
+      "fr": { "one": "cent", "many": "cents", "other": "cents" },
       "es": { "one": "centavo", "many": "centavos", "other": "centavos" },
       "it": { "one": "centesimo", "many": "centesimi", "other": "centesimi" },
       "nl": { "one": "cent", "other": "cent" },
@@ -16,7 +16,7 @@
       "zh": { "one": "分", "other": "分" },
       "ja": { "one": "セント", "other": "セント" },
       "th": { "one": "เซ็นต์", "other": "เซ็นต์" },
-      "ta": { "one": "சென்ட்", "other": "சென்ட்" }
+      "ta": { "one": "சதம்", "other": "சதம்" }
     },
     "EUR": {
       "en": { "one": "cent", "other": "cents" },
@@ -46,7 +46,7 @@
       "en": { "one": "cent", "other": "cents" },
       "zh": { "one": "分", "other": "分" },
       "ms": { "one": "sen", "other": "sen" },
-      "ta": { "one": "சென்ட்", "other": "சென்ட்" }
+      "ta": { "one": "காசு", "other": "காசு" }
     },
     "MYR": {
       "en": { "one": "sen", "other": "sen" },
