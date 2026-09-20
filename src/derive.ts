@@ -56,8 +56,9 @@ export function deriveOrder(locale: string, currency: string): "prefix" | "suffi
 
 /** CLDR's display fraction digits for the currency. Not always the ISO 4217 minor unit. */
 export function deriveExponent(locale: string, currency: string): number {
-  return new Intl.NumberFormat(locale, { style: "currency", currency }).resolvedOptions()
+  const digits = new Intl.NumberFormat(locale, { style: "currency", currency }).resolvedOptions()
     .maximumFractionDigits;
+  return digits ?? 2;
 }
 
 export function formatInteger(locale: string, value: bigint): string {
