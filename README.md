@@ -41,6 +41,12 @@ That is the entire maintenance surface.
 
 The invariant: `spoken` never contains a bare ISO code or a currency symbol.
 
+## Decisions
+
+- One shape rule per locale, so every amount of a currency reads the same way. Consistency matters more than matching any single engine's quirks.
+- The currency name is always spelled out, so the amount stays recognisable to a listener even when the engine would have read the code as letters.
+- One minor unit per currency, the one ISO 4217's exponent defines. Intermediate units such as `jiao`, `dime` or `毫` are not modelled, because no synthesizer verbalizes them.
+
 ## Accessibility
 
 ```ts

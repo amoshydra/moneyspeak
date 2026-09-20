@@ -435,7 +435,15 @@ defineCurrencyAmount();</code></pre>
               Output follows the runtime’s CLDR, so it can differ between browsers and Node versions,
               and can change without notice when those datasets update.
             </li>
-            <li>Subunit names are draft data, not CLDR, and need review before release.</li>
+            <li>
+              Subunit names are hand-written data, not CLDR. Every entry is checked against a source in
+              <code>data/SOURCES.md</code>; two Tamil entries remain doubtful.
+            </li>
+            <li>
+              One minor unit per currency, the one the exponent defines. Intermediate units such as
+              <code>jiao</code>, <code>dime</code> or <code>毫</code> are deliberately not modelled:
+              no synthesizer verbalizes them, and a decimal reading matches what they actually say.
+            </li>
             <li>
               The synthesizer still normalizes the digits. moneyspeak supplies the currency words and
               leaves number reading to the engine.
