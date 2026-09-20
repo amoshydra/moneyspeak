@@ -212,29 +212,39 @@ button {
 .examples {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.875rem;
 }
 
 .examples th,
 .examples td {
   text-align: left;
-  padding: 0.6rem 0.75rem;
+  padding: 0.3rem 0.6rem;
   border-bottom: 1px solid var(--line);
   vertical-align: middle;
+  line-height: 1.35;
 }
 
 .examples th {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: var(--muted);
+  padding-block: 0.35rem;
+}
+
+.examples tbody tr:hover {
+  background: var(--panel);
 }
 
 .examples .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   white-space: nowrap;
+  color: var(--muted);
 }
 
-.play {
+.examples .play {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
   white-space: nowrap;
 }
 
