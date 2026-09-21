@@ -30,7 +30,14 @@ export function setAccessibleMoney(el: Element, input: MoneyInput, options?: Ver
   el.append(spokenEl, displayEl);
 }
 
-export class CurrencyAmountElement extends HTMLElement {
+/**
+ * `HTMLElement` does not exist outside a browser. Guard the base so this entry
+ * can be imported during server rendering without throwing.
+ */
+const HTMLElementBase: typeof HTMLElement =
+  typeof HTMLElement !== "undefined" ? HTMLElement : (class {} as unknown as typeof HTMLElement);
+
+export class CurrencyAmountElement extends HTMLElementBase {
   static get observedAttributes(): string[] {
     return ["amount", "currency", "locale"];
   }
