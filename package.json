@@ -54,6 +54,7 @@
   "types": "./dist/index.d.mts",
   "scripts": {
     "build": "tsdown",
+    "prepack": "pnpm build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
