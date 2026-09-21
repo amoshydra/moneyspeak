@@ -1,16 +1,22 @@
 import { verbalizeMoney } from "../src/index.js";
 
 const CURRENCIES = [
-  "USD", "SGD", "EUR", "GBP", "JPY", "CNY", "TWD",
-  "HKD", "MYR", "IDR", "INR", "THB", "KWD",
+  "USD", "SGD", "EUR", "GBP", "JPY", "CNY", "TWD", "HKD",
+  "KRW", "MYR", "IDR", "THB", "VND", "PHP", "INR", "BDT",
+  "NPR", "PKR", "LKR", "KHR", "LAK", "MMK", "KWD",
 ];
 
 const LOCALES = [
-  "en-US", "en-GB", "en-IN", "en-SG", "de-DE", "fr-FR", "es-ES", "it-IT",
-  "nl-NL", "id-ID", "ms-MY", "ja-JP", "zh-CN", "zh-TW", "yue-HK", "th-TH", "ta-IN",
+  "en-US", "en-GB", "en-IN", "en-SG", "en-MY", "en-PH",
+  "de-DE", "fr-FR", "es-ES", "it-IT", "nl-NL",
+  "id-ID", "ms-MY", "fil-PH", "th-TH", "vi-VN",
+  "zh-CN", "zh-TW", "zh-HK", "yue-HK", "ja-JP", "ko-KR",
+  "hi-IN", "ta-IN", "te-IN", "ml-IN", "kn-IN", "mr-IN", "gu-IN", "pa-IN",
+  "bn-BD", "ne-NP", "ur-PK", "km-KH", "lo-LA", "my-MM",
 ];
 
 const EXAMPLES: Array<{ locale: string; currency: string; amount: string }> = [
+  // English
   { locale: "en-US", currency: "USD", amount: "123.45" },
   { locale: "en-US", currency: "SGD", amount: "123.45" },
   { locale: "en-US", currency: "USD", amount: "0.45" },
@@ -19,23 +25,47 @@ const EXAMPLES: Array<{ locale: string; currency: string; amount: string }> = [
   { locale: "en-US", currency: "JPY", amount: "123.45" },
   { locale: "en-US", currency: "KWD", amount: "123.456" },
   { locale: "en-GB", currency: "GBP", amount: "123.45" },
-  { locale: "en-IN", currency: "INR", amount: "123.45" },
   { locale: "en-SG", currency: "SGD", amount: "123.45" },
+  { locale: "en-MY", currency: "MYR", amount: "123.45" },
+  { locale: "en-PH", currency: "PHP", amount: "123.45" },
+  // Europe
   { locale: "de-DE", currency: "EUR", amount: "123.45" },
   { locale: "fr-FR", currency: "EUR", amount: "123.45" },
   { locale: "es-ES", currency: "EUR", amount: "123.45" },
   { locale: "it-IT", currency: "EUR", amount: "123.45" },
   { locale: "nl-NL", currency: "EUR", amount: "123.45" },
+  // South East Asia
   { locale: "id-ID", currency: "IDR", amount: "123.45" },
   { locale: "id-ID", currency: "USD", amount: "123.45" },
   { locale: "ms-MY", currency: "MYR", amount: "123.45" },
-  { locale: "ja-JP", currency: "JPY", amount: "123" },
-  { locale: "ja-JP", currency: "USD", amount: "123.45" },
+  { locale: "fil-PH", currency: "PHP", amount: "123.45" },
+  { locale: "th-TH", currency: "THB", amount: "123.45" },
+  { locale: "vi-VN", currency: "USD", amount: "123.45" },
+  { locale: "km-KH", currency: "KHR", amount: "123.45" },
+  { locale: "lo-LA", currency: "LAK", amount: "123.45" },
+  { locale: "my-MM", currency: "MMK", amount: "123.45" },
+  // East Asia
   { locale: "zh-CN", currency: "CNY", amount: "123.45" },
   { locale: "zh-TW", currency: "TWD", amount: "123.45" },
+  { locale: "zh-HK", currency: "HKD", amount: "123.45" },
   { locale: "yue-HK", currency: "HKD", amount: "123.45" },
-  { locale: "th-TH", currency: "THB", amount: "123.45" },
+  { locale: "ja-JP", currency: "JPY", amount: "123" },
+  { locale: "ja-JP", currency: "USD", amount: "123.45" },
+  { locale: "ja-JP", currency: "CNY", amount: "123.45" },
+  { locale: "ko-KR", currency: "KRW", amount: "123" },
+  { locale: "ko-KR", currency: "USD", amount: "123.45" },
+  // South Asia
+  { locale: "hi-IN", currency: "INR", amount: "123.45" },
   { locale: "ta-IN", currency: "INR", amount: "123.45" },
+  { locale: "te-IN", currency: "INR", amount: "123.45" },
+  { locale: "ml-IN", currency: "INR", amount: "123.45" },
+  { locale: "kn-IN", currency: "INR", amount: "123.45" },
+  { locale: "mr-IN", currency: "INR", amount: "123.45" },
+  { locale: "gu-IN", currency: "INR", amount: "123.45" },
+  { locale: "pa-IN", currency: "INR", amount: "123.45" },
+  { locale: "bn-BD", currency: "BDT", amount: "123.45" },
+  { locale: "ne-NP", currency: "NPR", amount: "123.45" },
+  { locale: "ur-PK", currency: "PKR", amount: "123" },
 ];
 
 function q<T extends Element>(selector: string): T {
