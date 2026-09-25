@@ -5,6 +5,7 @@ import {
   deriveOrder,
   deriveSymbol,
   formatInteger,
+  isLatinScript,
   selectPlural,
 } from "./derive.js";
 import { exponentOverride, localeProfile, lookupSubunit, nameOverride } from "./patch.js";
@@ -113,10 +114,13 @@ function displayString(resolved: ResolvedCurrency, amount: number | string | big
   }).format(Number(toPlainString(amount)));
 }
 
+const WORD_JOINER = "\u2060";
+
 function decimalNameString(
   resolved: ResolvedCurrency,
   amount: number | string | bigint,
   name: string,
+  breakBeforeDecimal: boolean,
 ): string {
   const parts = new Intl.NumberFormat(resolved.locale, {
     style: "currency",
@@ -125,7 +129,17 @@ function decimalNameString(
     minimumFractionDigits: resolved.exponent,
     maximumFractionDigits: resolved.exponent,
   }).formatToParts(Number(toPlainString(amount)));
-  return parts.map((part) => (part.type === "currency" ? name : part.value)).join("");
+
+  return parts
+    .map((part) => {
+      if (part.type === "currency") return name;
+      // A word joiner before the separator stops a screen reader from parsing
+      // the number and reading the "." as an English "point". The synthesizer
+      // then normalizes the number itself, which it already does correctly.
+      if (breakBeforeDecimal && part.type === "decimal") return WORD_JOINER + part.value;
+      return part.value;
+    })
+    .join("");
 }
 
 /**
@@ -143,6 +157,8 @@ export function verbalizeMoney(input: MoneyInput, options: VerbalizeOptions = {}
     typeof options.subunit === "string" ? { one: options.subunit, other: options.subunit } : undefined;
   const subunitForms = options.subunit === false ? null : (overrideSubunit ?? resolved.subunit);
   const effectiveName = options.name ? { one: options.name, other: options.name } : resolved.name;
+  const breakBeforeDecimal =
+    (options.decimalBreak ?? "auto") === "auto" && !isLatinScript(resolved.locale);
 
   const requested = options.style ?? "auto";
   let strategy: Strategy;
@@ -193,7 +209,7 @@ export function verbalizeMoney(input: MoneyInput, options: VerbalizeOptions = {}
       spoken = `${sign}${formatInteger(resolved.locale, major)} ${majorName}${join} ${minorText}`;
     }
   } else {
-    spoken = decimalNameString(resolved, input.amount, effectiveName.other);
+    spoken = decimalNameString(resolved, input.amount, effectiveName.other, breakBeforeDecimal);
   }
 
   return { spoken, display: displayString(resolved, input.amount), strategy, warnings };

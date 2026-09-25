@@ -32,6 +32,7 @@ verbalizeMoney({ amount: 123.45, currency: "SGD", locale: "en-US" });
 | `name` | replace the spoken currency name |
 | `subunit` | replace the minor unit name, or `false` to drop it |
 | `connector` | replace the word joining major and minor |
+| `decimalBreak` | `"auto"` (default) inserts a word joiner before the separator for non-Latin scripts; `"none"` disables |
 | `locale` | override `input.locale` |
 
 Returns `{ spoken, display, strategy, warnings }`.
@@ -43,7 +44,7 @@ Also exported:
 
 DOM helpers, in `moneyspeak/dom`:
 
-- `setAccessibleMoney(el, input, options?)` — writes a visually hidden spoken form and the conventional display form.
+- `setAccessibleMoney(el, input, options?)` — writes a visually hidden spoken form and the conventional display form. The hidden node is a `<div>` carrying `lang` (and `dir="auto"`), because VoiceOver honors `lang` on a block element and ignores it on a `<span>` even with `display:block`.
 - `defineCurrencyAmount()` — registers `<currency-amount amount currency locale>`.
 
 ## Strategy
@@ -71,6 +72,7 @@ Two files hold the rest:
 
 - Output follows the runtime's CLDR, so it can differ between browsers and Node versions.
 - One minor unit per currency, the one ISO 4217's exponent defines. Intermediate units (`jiao`, `dime`) are not modelled, because no synthesizer verbalizes them.
+- The integer digits are left to the engine. The decimal separator is not. VoiceOver on macOS parses the number itself and reads an ASCII `.` as an English "point" even with a Chinese or Japanese voice, and `lang` only selects the voice. `spoken` therefore inserts an invisible word joiner (`U+2060`) before the separator for non-Latin scripts, which stops VoiceOver parsing the number so the synthesizer normalizes it itself. Latin scripts are untouched, and `{ decimalBreak: "none" }` disables it.
 
 ## Develop
 

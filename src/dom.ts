@@ -1,4 +1,5 @@
 import { verbalizeMoney } from "./verbalize.js";
+import { canonicalLocale } from "./derive.js";
 import type { MoneyInput, VerbalizeOptions } from "./types.js";
 
 export const SR_ONLY_CLASS = "moneyspeak-sr";
@@ -19,8 +20,14 @@ export function setAccessibleMoney(el: Element, input: MoneyInput, options?: Ver
 
   el.textContent = "";
 
-  const spokenEl = doc.createElement("span");
+  const spokenEl = doc.createElement("div");
+  // A block-level tag, not a span: VoiceOver honors lang on a <div> and
+  // ignores it on a <span> even with display:block, so the language never
+  // switches and a decimal is read with an English "point". Created via DOM,
+  // so the nesting inside inline content is never reparsed by the parser.
   spokenEl.className = SR_ONLY_CLASS;
+  spokenEl.lang = canonicalLocale(options?.locale ?? input.locale);
+  spokenEl.dir = "auto";
   spokenEl.textContent = spoken;
 
   const displayEl = doc.createElement("span");

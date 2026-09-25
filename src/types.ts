@@ -18,6 +18,12 @@ export interface VerbalizeOptions {
   subunit?: string | false;
   /** Replace the connector between major and minor. */
   connector?: string;
+  /**
+   * Insert an invisible word joiner before the decimal separator in `spoken`
+   * for non-Latin scripts, so a screen reader does not parse the number and
+   * insert an English "point". `"auto"` (default) does this; `"none"` disables.
+   */
+  decimalBreak?: "auto" | "none";
   /** BCP 47 tag; overrides `input.locale`. */
   locale?: string;
 }

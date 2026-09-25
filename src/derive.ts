@@ -68,3 +68,12 @@ export function formatInteger(locale: string, value: bigint): string {
 export function selectPlural(locale: string, value: bigint): PluralCategory {
   return new Intl.PluralRules(locale).select(Number(value)) as PluralCategory;
 }
+
+/** True when the locale's script is Latin, where a plain "." already reads correctly. */
+export function isLatinScript(locale: string): boolean {
+  try {
+    return new Intl.Locale(locale).maximize().script === "Latn";
+  } catch {
+    return true;
+  }
+}
