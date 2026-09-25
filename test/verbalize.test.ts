@@ -150,6 +150,13 @@ describe("decimal break", () => {
     expect(verbalizeMoney({ amount: 123.45, currency: "HKD", locale: "zh-HK" }).display).toContain("123.45");
   });
 
+  it("never puts the word joiner in the display string", () => {
+    for (const locale of ["zh-CN", "zh-TW", "zh-HK", "ja-JP", "th-TH", "ko-KR", "en-US", "de-DE"]) {
+      const { display } = verbalizeMoney({ amount: 123.456, currency: "KWD", locale });
+      expect(display).not.toContain("\u2060");
+    }
+  });
+
   it("leaves Latin-script locales untouched", () => {
     expect(verbalizeMoney({ amount: 123.456, currency: "KWD", locale: "en-US" }).spoken).toBe(
       "123.456 Kuwaiti dinars",
