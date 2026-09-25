@@ -57,7 +57,7 @@ describe("verbalizeMoney: shape by locale", () => {
     ] as const) {
       const result = verbalizeMoney({ amount: 123.45, currency, locale });
       expect(result.strategy).toBe("decimal-name");
-      expect(result.spoken).toContain("123\u2060.");
+      expect(result.spoken).toContain("123.");
       expect(result.spoken).toContain(name);
     }
   });
@@ -139,9 +139,20 @@ describe("plural categories", () => {
 });
 
 describe("decimal break", () => {
-  it("inserts a word joiner before the separator for non-Latin scripts", () => {
+  it("is off by default", () => {
     for (const locale of ["zh-CN", "zh-TW", "zh-HK", "ja-JP", "th-TH", "ko-KR"]) {
       const { spoken } = verbalizeMoney({ amount: 123.45, currency: "USD", locale });
+      expect(spoken).not.toContain("\u2060");
+      expect(spoken).toContain("123.");
+    }
+  });
+
+  it("inserts a word joiner when enabled", () => {
+    for (const locale of ["zh-CN", "zh-TW", "zh-HK", "ja-JP", "th-TH", "ko-KR"]) {
+      const { spoken } = verbalizeMoney(
+        { amount: 123.45, currency: "USD", locale },
+        { decimalBreak: "auto" },
+      );
       expect(spoken).toContain("123\u2060.");
     }
   });
@@ -152,23 +163,17 @@ describe("decimal break", () => {
 
   it("never puts the word joiner in the display string", () => {
     for (const locale of ["zh-CN", "zh-TW", "zh-HK", "ja-JP", "th-TH", "ko-KR", "en-US", "de-DE"]) {
-      const { display } = verbalizeMoney({ amount: 123.456, currency: "KWD", locale });
+      const { display } = verbalizeMoney(
+        { amount: 123.456, currency: "KWD", locale },
+        { decimalBreak: "auto" },
+      );
       expect(display).not.toContain("\u2060");
     }
   });
 
-  it("leaves Latin-script locales untouched", () => {
-    expect(verbalizeMoney({ amount: 123.456, currency: "KWD", locale: "en-US" }).spoken).toBe(
-      "123.456 Kuwaiti dinars",
-    );
-  });
-
-  it("can be disabled", () => {
-    const result = verbalizeMoney(
-      { amount: 123.45, currency: "CNY", locale: "zh-CN" },
-      { decimalBreak: "none" },
-    );
-    expect(result.spoken).toContain("123.");
-    expect(result.spoken).not.toContain("\u2060");
+  it("does not apply to Latin-script locales even when enabled", () => {
+    expect(
+      verbalizeMoney({ amount: 123.456, currency: "KWD", locale: "en-US" }, { decimalBreak: "auto" }).spoken,
+    ).toBe("123.456 Kuwaiti dinars");
   });
 });

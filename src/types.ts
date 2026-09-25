@@ -19,9 +19,11 @@ export interface VerbalizeOptions {
   /** Replace the connector between major and minor. */
   connector?: string;
   /**
-   * Insert an invisible word joiner before the decimal separator in `spoken`
-   * for non-Latin scripts, so a screen reader does not parse the number and
-   * insert an English "point". `"auto"` (default) does this; `"none"` disables.
+   * VoiceOver workaround, off by default. `"auto"` inserts an invisible word
+   * joiner (U+2060) before the decimal separator for non-Latin scripts, which
+   * stops VoiceOver on affected macOS/iOS versions reading the "." as an
+   * English "point". Left off because TalkBack on Android reads U+2060 aloud
+   * as "word joiner", and iOS 27 no longer needs it.
    */
   decimalBreak?: "auto" | "none";
   /** BCP 47 tag; overrides `input.locale`. */

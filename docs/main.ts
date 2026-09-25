@@ -102,8 +102,8 @@ const options = (): VerbalizeOptions => ({ decimalBreak: breakInput.checked ? "a
 
 function updateNote(): void {
   breakNote.textContent = breakInput.checked
-    ? "workaround on: a word joiner (U+2060) is inserted before the decimal separator, so VoiceOver does not read it as an English “point”."
-    : "workaround off: the plain ASCII “.” is emitted. VoiceOver on macOS/iOS reads it as an English “point”.";
+    ? "workaround on: a word joiner (U+2060) is inserted before the decimal separator, which stops older VoiceOver versions reading it as an English “point”. Note that TalkBack on Android may read U+2060 aloud as “word joiner”."
+    : "workaround off (default): the plain ASCII “.” is emitted. iOS 27 and most engines read it correctly; macOS and iOS 26 did not.";
 }
 
 /* Demo ------------------------------------------------------------------- */

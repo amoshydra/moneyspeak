@@ -32,7 +32,7 @@ verbalizeMoney({ amount: 123.45, currency: "SGD", locale: "en-US" });
 | `name` | replace the spoken currency name |
 | `subunit` | replace the minor unit name, or `false` to drop it |
 | `connector` | replace the word joining major and minor |
-| `decimalBreak` | `"auto"` (default) inserts a word joiner before the separator for non-Latin scripts; `"none"` disables |
+| `decimalBreak` | `"auto"` inserts a word joiner before the separator for non-Latin scripts; default `"none"` |
 | `locale` | override `input.locale` |
 
 Returns `{ spoken, display, strategy, warnings }`.
@@ -72,7 +72,7 @@ Two files hold the rest:
 
 - Output follows the runtime's CLDR, so it can differ between browsers and Node versions.
 - One minor unit per currency, the one ISO 4217's exponent defines. Intermediate units (`jiao`, `dime`) are not modelled, because no synthesizer verbalizes them.
-- The integer digits are left to the engine. The decimal separator is not. VoiceOver on macOS parses the number itself and reads an ASCII `.` as an English "point" even with a Chinese or Japanese voice, and `lang` only selects the voice. `spoken` therefore inserts an invisible word joiner (`U+2060`) before the separator for non-Latin scripts, which stops VoiceOver parsing the number so the synthesizer normalizes it itself. Latin scripts are untouched, and `{ decimalBreak: "none" }` disables it.
+- The integer digits are left to the engine. The decimal separator is not. VoiceOver on macOS and on iOS 26 parsed the number itself and read an ASCII `.` as an English "point" even with a Chinese or Japanese voice, and `lang` only selects the voice. An opt-in workaround, `{ decimalBreak: "auto" }`, inserts an invisible word joiner (`U+2060`) before the separator for non-Latin scripts, which stops the parsing so the synthesizer normalizes the number itself. It is **off by default**: TalkBack on Android reads `U+2060` aloud as "word joiner", and iOS 27 no longer has the bug.
 
 ## Develop
 

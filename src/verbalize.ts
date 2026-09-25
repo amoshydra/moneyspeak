@@ -158,7 +158,7 @@ export function verbalizeMoney(input: MoneyInput, options: VerbalizeOptions = {}
   const subunitForms = options.subunit === false ? null : (overrideSubunit ?? resolved.subunit);
   const effectiveName = options.name ? { one: options.name, other: options.name } : resolved.name;
   const breakBeforeDecimal =
-    (options.decimalBreak ?? "auto") === "auto" && !isLatinScript(resolved.locale);
+    options.decimalBreak === "auto" && !isLatinScript(resolved.locale);
 
   const requested = options.style ?? "auto";
   let strategy: Strategy;
