@@ -141,6 +141,29 @@ pre code {
   color: var(--muted);
 }
 
+.field.check {
+  align-self: center;
+}
+
+.field.check label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--fg);
+  font-size: 0.9rem;
+}
+
+.field.check input {
+  min-width: 0;
+  margin: 0;
+}
+
+.hint {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 input,
 select {
   font: inherit;

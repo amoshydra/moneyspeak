@@ -62,6 +62,12 @@ setAccessibleMoney(el, { amount: 123.45, currency: "SGD", locale: "en-SG" });</c
               <label for="locale">Locale</label>
               <select id="locale" name="locale"></select>
             </div>
+            <div class="field check">
+              <label for="decimal-break">
+                <input id="decimal-break" type="checkbox" checked />
+                decimal workaround
+              </label>
+            </div>
             <button type="submit" class="primary">Speak</button>
           </form>
 
@@ -74,6 +80,7 @@ setAccessibleMoney(el, { amount: 123.45, currency: "SGD", locale: "en-SG" });</c
             <dd id="out-strategy"></dd>
           </dl>
           <p id="demo-status" class="status" role="status" aria-live="polite"></p>
+          <p id="break-note" class="hint"></p>
         </div>
       </section>
 

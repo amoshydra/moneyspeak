@@ -1,4 +1,5 @@
 import { verbalizeMoney } from "../src/index.js";
+import type { VerbalizeOptions } from "../src/index.js";
 
 const CURRENCIES = [
   "USD", "SGD", "EUR", "GBP", "JPY", "CNY", "TWD", "HKD",
@@ -92,6 +93,19 @@ function speak(text: string, locale: string): void {
   speechSynthesis.speak(utterance);
 }
 
+/* Decimal workaround toggle ---------------------------------------------- */
+
+const breakInput = q<HTMLInputElement>("#decimal-break");
+const breakNote = q<HTMLElement>("#break-note");
+
+const options = (): VerbalizeOptions => ({ decimalBreak: breakInput.checked ? "auto" : "none" });
+
+function updateNote(): void {
+  breakNote.textContent = breakInput.checked
+    ? "workaround on: a word joiner (U+2060) is inserted before the decimal separator, so VoiceOver does not read it as an English “point”."
+    : "workaround off: the plain ASCII “.” is emitted. VoiceOver on macOS/iOS reads it as an English “point”.";
+}
+
 /* Demo ------------------------------------------------------------------- */
 
 const form = q<HTMLFormElement>("#demo-form");
@@ -114,7 +128,7 @@ function update(): void {
   const locale = localeSelect.value;
 
   try {
-    const result = verbalizeMoney({ amount, currency, locale });
+    const result = verbalizeMoney({ amount, currency, locale }, options());
     outSpoken.textContent = result.spoken;
     outSpoken.lang = locale;
     outDisplay.textContent = result.display;
@@ -139,41 +153,52 @@ form.addEventListener("submit", (event) => {
 amountInput.addEventListener("input", update);
 currencySelect.addEventListener("change", update);
 localeSelect.addEventListener("change", update);
+breakInput.addEventListener("change", () => {
+  updateNote();
+  update();
+  renderExamples();
+});
+updateNote();
 update();
 
 /* Examples --------------------------------------------------------------- */
 
 const examplesBody = q<HTMLTableSectionElement>("#examples-body");
 
-for (const example of EXAMPLES) {
-  const result = verbalizeMoney({
-    amount: example.amount,
-    currency: example.currency,
-    locale: example.locale,
-  });
+function renderExamples(): void {
+  examplesBody.textContent = "";
 
-  const row = document.createElement("tr");
+  for (const example of EXAMPLES) {
+    const result = verbalizeMoney(
+      { amount: example.amount, currency: example.currency, locale: example.locale },
+      options(),
+    );
 
-  const localeCell = document.createElement("td");
-  localeCell.textContent = example.locale;
+    const row = document.createElement("tr");
 
-  const inputCell = document.createElement("td");
-  inputCell.className = "mono";
-  inputCell.textContent = result.display;
+    const localeCell = document.createElement("td");
+    localeCell.textContent = example.locale;
 
-  const spokenCell = document.createElement("td");
-  spokenCell.lang = example.locale;
-  spokenCell.textContent = result.spoken;
+    const inputCell = document.createElement("td");
+    inputCell.className = "mono";
+    inputCell.textContent = result.display;
 
-  const playCell = document.createElement("td");
-  const play = document.createElement("button");
-  play.type = "button";
-  play.className = "play";
-  play.textContent = "Play";
-  play.setAttribute("aria-label", `Play: ${result.spoken}`);
-  play.addEventListener("click", () => speak(result.spoken, example.locale));
-  playCell.append(play);
+    const spokenCell = document.createElement("td");
+    spokenCell.lang = example.locale;
+    spokenCell.textContent = result.spoken;
 
-  row.append(localeCell, inputCell, spokenCell, playCell);
-  examplesBody.append(row);
+    const playCell = document.createElement("td");
+    const play = document.createElement("button");
+    play.type = "button";
+    play.className = "play";
+    play.textContent = "Play";
+    play.setAttribute("aria-label", `Play: ${result.spoken}`);
+    play.addEventListener("click", () => speak(result.spoken, example.locale));
+    playCell.append(play);
+
+    row.append(localeCell, inputCell, spokenCell, playCell);
+    examplesBody.append(row);
+  }
 }
+
+renderExamples();
