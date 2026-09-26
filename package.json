@@ -1,6 +1,6 @@
 {
   "name": "moneyspeak",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Verbalize currency amounts for speech synthesizers. Derive the spoken form from Intl; patch only the gaps.",
   "keywords": [
     "currency",
