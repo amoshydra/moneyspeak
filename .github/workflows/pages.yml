@@ -28,7 +28,10 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
       - run: pnpm test
+      - run: pnpm build
+      - run: pnpm compare:data
       - run: pnpm docs:build
 
       - uses: actions/configure-pages@v5

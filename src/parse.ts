@@ -18,7 +18,8 @@ const AMBIGUOUS_SYMBOLS: Record<string, string[]> = {
 
 /**
  * Best-effort reader for a formatted amount. Pass `{ currency }` when the
- * symbol is ambiguous, which `$` and `¥` are.
+ * symbol is ambiguous, which `$` and `¥` are: the thrown error names the
+ * candidates rather than leaving the caller to guess.
  */
 export function parseMoney(
   text: string,
@@ -26,7 +27,6 @@ export function parseMoney(
   options: { currency?: string } = {},
 ): ParsedMoney {
   const loc = canonicalLocale(locale);
-  const warnings: string[] = [];
 
   let currency = options.currency?.toUpperCase();
   if (!currency) {
@@ -41,13 +41,9 @@ export function parseMoney(
     }
   }
   if (!currency) {
-    for (const [symbol, codes] of Object.entries(AMBIGUOUS_SYMBOLS)) {
-      if (text.includes(symbol)) {
-        warnings.push(`${symbol} is ambiguous (${codes.join(", ")}); pass { currency }`);
-        break;
-      }
-    }
-    throw new TypeError("could not determine the currency; pass { currency }");
+    const ambiguous = Object.entries(AMBIGUOUS_SYMBOLS).find(([symbol]) => text.includes(symbol));
+    const hint = ambiguous ? ` (${ambiguous[0]} is ambiguous: ${ambiguous[1].join(", ")})` : "";
+    throw new TypeError(`could not determine the currency${hint}; pass { currency }`);
   }
 
   const decimal =
@@ -60,5 +56,5 @@ export function parseMoney(
     throw new TypeError(`could not read an amount from ${JSON.stringify(text)}`);
   }
 
-  return { amount: normalized, currency, locale: loc, warnings };
+  return { amount: normalized, currency, locale: loc };
 }

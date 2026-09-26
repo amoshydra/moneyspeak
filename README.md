@@ -84,6 +84,8 @@ A subunit is resolved in four tiers, most specific first:
 
 The decimal reading is left for a currency whose kind is unknown.
 
+`data/example-matrix.json` holds the locale and currency surface used by the docs demo, the matrix test and `matrix:dump`, so the three cannot drift apart. It is an example set, not a support boundary: any BCP 47 locale and any ISO 4217 code is accepted.
+
 `pnpm compare:data` checks the subunit plural categories against CLDR and the exponents against ISO 4217, reports the model coverage, and names the currencies whose exponent deliberately differs from ISO. Per-entry sources are in `data/SOURCES.md`.
 
 ## Limits
@@ -92,17 +94,19 @@ The decimal reading is left for a currency whose kind is unknown.
 - The fraction digits come from CLDR by default. `data/overrides.json` corrects the cases where CLDR's display digits are not the ISO 4217 minor unit (`IDR`), and `compare:data` lists the currencies where the two disagree on purpose (`LAK`, `MMK`, whose subunits are out of use).
 - One minor unit per currency. Intermediate units (`jiao`, `dime`) are not modelled, because no synthesizer verbalizes them.
 - When a language has no word for a kind, the reading uses the kind's international name, which can put a non-native word inside another language: Korean with a Swedish krona reads `1 스웨덴 크로나 5 øre`, and Hindi with a Swiss franc reads `1 स्विस फ़्रैंक 5 centimes`. It keeps the reading major-plus-minor instead of dropping to the decimal, and `data/subunits.json` is where a language's own word replaces it.
-- The integer digits are left to the engine. The decimal separator is not. VoiceOver on macOS and on iOS 26 parsed the number itself and read an ASCII `.` as an English "point" even with a Chinese or Japanese voice, and `lang` only selects the voice. An opt-in workaround, `{ decimalBreak: "auto" }`, inserts an invisible word joiner (`U+2060`) before an ASCII `.` for non-Latin scripts, which stops the parsing so the synthesizer normalizes the number itself. It is **off by default**: TalkBack on Android reads `U+2060` aloud as "word joiner", and iOS 27 no longer has the bug.
+- The integer digits are left to the engine. The decimal separator is not. VoiceOver on macOS and on iOS 26 parsed the number itself and read an ASCII `.` as an English "point" even with a Chinese or Japanese voice, and `lang` only selects the voice. An opt-in workaround, `{ decimalBreak: "auto" }`, inserts an invisible word joiner (`U+2060`) before an ASCII `.` for non-Latin scripts, which stops the parsing so the synthesizer normalizes the number itself. It is **off by default**, because it is harmful elsewhere: measured on Google TTS the joiner drops the fractional part (`123<wj>.45人民币` reads 一百二十三人民币), and TalkBack on Android reads `U+2060` aloud as "word joiner". iOS 27 no longer has the original bug.
+- Measured on Google TTS (`com.google.android.tts`, OnePlus 6T, Android 15): the fifteen locale renders all read the minor unit with no "point". On that build the bare codes `USD123.45`, `SGD123.45` and `CNY123.45` are named correctly too, so the library's value there is consistency, not a rescue. The engines that spell a code out are the ones the corpus documented.
 
 ## Develop
 
 ```bash
 pnpm install
-pnpm test          # vitest
+pnpm test          # vitest, includes the full locale x currency matrix
 pnpm build         # tsdown, ESM and CJS
 pnpm typecheck     # tsc --noEmit
 pnpm docs          # Vite docs app
-pnpm compare:data  # data vs CLDR and ISO 4217
+pnpm compare:data  # data vs CLDR and ISO 4217, exits non-zero on a gap
+pnpm matrix:dump   # full matrix for review when the runtime or data changes
 ```
 
 MIT

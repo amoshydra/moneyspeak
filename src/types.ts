@@ -20,10 +20,11 @@ export interface VerbalizeOptions {
   connector?: string;
   /**
    * VoiceOver workaround, off by default. `"auto"` inserts an invisible word
-   * joiner (U+2060) before the decimal separator for non-Latin scripts, which
-   * stops VoiceOver on affected macOS/iOS versions reading the "." as an
-   * English "point". Left off because TalkBack on Android reads U+2060 aloud
-   * as "word joiner", and iOS 27 no longer needs it.
+   * joiner (U+2060) before an ASCII "." for non-Latin scripts, which stops
+   * VoiceOver on affected macOS and iOS 26 versions reading the "." as an
+   * English "point". Kept off because it is harmful elsewhere: measured on
+   * Google TTS it drops the fractional part entirely (`123<wj>.45人民币` reads
+   * `一百二十三人民币`), and TalkBack reads U+2060 aloud as "word joiner".
    */
   decimalBreak?: "auto" | "none";
   /** BCP 47 tag; overrides `input.locale`. */
@@ -68,5 +69,4 @@ export interface ParsedMoney {
   amount: string;
   currency: string;
   locale: string;
-  warnings: string[];
 }

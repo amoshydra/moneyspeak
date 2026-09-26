@@ -70,6 +70,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "compare:data": "node scripts/compare-data.mjs",
+    "matrix:dump": "node scripts/dump-matrix.mjs",
     "docs": "vite docs",
     "docs:build": "vite build docs"
   },

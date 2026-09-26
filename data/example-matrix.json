@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "status": "draft",
+    "note": "The locale x currency surface covered by the docs demo, the matrix test, and matrix:dump. Kept in one place so the three cannot drift apart. These are examples, not a support boundary: the library accepts any BCP 47 locale and any ISO 4217 code."
+  },
+  "locales": [
+    "en-US", "en-GB", "en-IN", "en-SG", "en-MY", "en-PH",
+    "de-DE", "fr-FR", "es-ES", "it-IT", "nl-NL",
+    "id-ID", "ms-MY", "fil-PH", "th-TH", "vi-VN",
+    "zh-CN", "zh-TW", "zh-HK", "yue-HK", "ja-JP", "ko-KR",
+    "hi-IN", "ta-IN", "te-IN", "ml-IN", "kn-IN", "mr-IN", "gu-IN", "pa-IN",
+    "bn-BD", "ne-NP", "ur-PK", "km-KH", "lo-LA", "my-MM"
+  ],
+  "currencies": [
+    "USD", "SGD", "EUR", "GBP", "JPY", "CNY", "TWD", "HKD",
+    "KRW", "MYR", "IDR", "THB", "VND", "PHP", "INR", "BDT",
+    "NPR", "PKR", "LKR", "KHR", "LAK", "MMK", "KWD"
+  ]
+}

@@ -34,6 +34,9 @@ const NO_SUBUNIT_IN_PRACTICE = {
   MMK: "the pya is no longer in regular use",
 };
 
+// Summary problems are counted so the script can gate CI rather than only print.
+let problems = 0;
+
 const categoriesFor = (locale) =>
   new Intl.PluralRules(locale).resolvedOptions().pluralCategories;
 
@@ -46,6 +49,7 @@ for (const [lang, byKind] of Object.entries(subunits)) {
     const gaps = needed.filter((category) => !have.includes(category));
     if (gaps.length > 0) {
       missing.push({ lang, kind, needed, have, gaps });
+      problems += 1;
     }
   }
 }
@@ -69,6 +73,8 @@ for (const currency of Object.keys(ISO_MINOR_UNITS)) {
   const override = overrides.exponent?.[currency];
   if (intlDigits !== iso) {
     mismatch.push({ currency, intlDigits, iso, override, note: NO_SUBUNIT_IN_PRACTICE[currency] });
+    // A mismatch that is neither overridden nor documented is a real problem.
+    if (override !== iso && !NO_SUBUNIT_IN_PRACTICE[currency]) problems += 1;
   }
 }
 if (mismatch.length === 0) {
@@ -117,6 +123,13 @@ if (unnamed.length > 0) {
   console.log(
     `  kinds with neither a word nor an international name (always fall back): ${unnamed.join(", ")}`,
   );
+  problems += 1;
 } else {
   console.log("  every mapped kind resolves for every language");
 }
+
+if (problems > 0) {
+  console.log(`\n${problems} problem(s) found`);
+  process.exit(1);
+}
+console.log("\nno problems found");

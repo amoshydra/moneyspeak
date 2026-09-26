@@ -1,20 +1,9 @@
 import { verbalizeMoney } from "../src/index.js";
 import type { VerbalizeOptions } from "../src/index.js";
+import matrix from "../data/example-matrix.json";
 
-const CURRENCIES = [
-  "USD", "SGD", "EUR", "GBP", "JPY", "CNY", "TWD", "HKD",
-  "KRW", "MYR", "IDR", "THB", "VND", "PHP", "INR", "BDT",
-  "NPR", "PKR", "LKR", "KHR", "LAK", "MMK", "KWD",
-];
-
-const LOCALES = [
-  "en-US", "en-GB", "en-IN", "en-SG", "en-MY", "en-PH",
-  "de-DE", "fr-FR", "es-ES", "it-IT", "nl-NL",
-  "id-ID", "ms-MY", "fil-PH", "th-TH", "vi-VN",
-  "zh-CN", "zh-TW", "zh-HK", "yue-HK", "ja-JP", "ko-KR",
-  "hi-IN", "ta-IN", "te-IN", "ml-IN", "kn-IN", "mr-IN", "gu-IN", "pa-IN",
-  "bn-BD", "ne-NP", "ur-PK", "km-KH", "lo-LA", "my-MM",
-];
+const CURRENCIES = matrix.currencies;
+const LOCALES = matrix.locales;
 
 const EXAMPLES: Array<{ locale: string; currency: string; amount: string }> = [
   // English
