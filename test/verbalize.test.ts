@@ -50,16 +50,40 @@ describe("verbalizeMoney: shape by locale", () => {
   });
 
   it("uses decimal-name where the locale does not split units", () => {
+    // zh sets split: false, so even a currency with a known subunit is read
+    // as a decimal number.
     for (const [locale, currency, name] of [
-      ["ja-JP", "USD", "米ドル"],
       ["zh-CN", "CNY", "人民币"],
-      ["th-TH", "THB", "บาทไทย"],
+      ["zh-TW", "CNY", "人民幣"],
+      ["zh-HK", "CNY", "人民幣"],
     ] as const) {
       const result = verbalizeMoney({ amount: 123.45, currency, locale });
       expect(result.strategy).toBe("decimal-name");
       expect(result.spoken).toContain("123.");
       expect(result.spoken).toContain(name);
     }
+  });
+
+  it("reads a Japanese amount as major and minor", () => {
+    const result = verbalizeMoney({ amount: 123.45, currency: "USD", locale: "ja-JP" });
+    expect(result.strategy).toBe("major-minor");
+    expect(result.spoken).toContain("米ドル");
+    expect(result.spoken).toContain("セント");
+  });
+
+  it("reads a Thai amount as major and minor", () => {
+    const result = verbalizeMoney({ amount: 123.45, currency: "THB", locale: "th-TH" });
+    expect(result.strategy).toBe("major-minor");
+    expect(result.spoken).toContain("บาท");
+    expect(result.spoken).toContain("สตางค์");
+  });
+
+  it("falls back to decimal-name when the locale splits but the currency has no subunit", () => {
+    // CNY has no settled Japanese subunit, so ja-CNY stays a number reading.
+    const result = verbalizeMoney({ amount: 123.45, currency: "CNY", locale: "ja-JP" });
+    expect(result.strategy).toBe("decimal-name");
+    expect(result.spoken).toContain("中国人民元");
+    expect(result.spoken).toContain("123.");
   });
 
   it("applies the id-ID name override", () => {
@@ -140,8 +164,10 @@ describe("plural categories", () => {
 
 describe("decimal break", () => {
   it("is off by default", () => {
+    // CNY has no subunit in these locales, so all six stay decimal-name. USD
+    // would split into major and minor for ja-JP and th-TH.
     for (const locale of ["zh-CN", "zh-TW", "zh-HK", "ja-JP", "th-TH", "ko-KR"]) {
-      const { spoken } = verbalizeMoney({ amount: 123.45, currency: "USD", locale });
+      const { spoken } = verbalizeMoney({ amount: 123.45, currency: "CNY", locale });
       expect(spoken).not.toContain("\u2060");
       expect(spoken).toContain("123.");
     }
@@ -150,7 +176,7 @@ describe("decimal break", () => {
   it("inserts a word joiner when enabled", () => {
     for (const locale of ["zh-CN", "zh-TW", "zh-HK", "ja-JP", "th-TH", "ko-KR"]) {
       const { spoken } = verbalizeMoney(
-        { amount: 123.45, currency: "USD", locale },
+        { amount: 123.45, currency: "CNY", locale },
         { decimalBreak: "auto" },
       );
       expect(spoken).toContain("123\u2060.");

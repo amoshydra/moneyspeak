@@ -23,8 +23,8 @@
     "ms": { "connector": "", "split": true },
     "ta": { "connector": "", "split": true },
     "zh": { "connector": "", "split": false },
-    "ja": { "connector": "", "split": false },
-    "th": { "connector": "", "split": false },
+    "ja": { "connector": "", "split": true },
+    "th": { "connector": "", "split": true },
     "yue": { "connector": "", "split": false }
   }
 }

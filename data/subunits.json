@@ -24,10 +24,12 @@
       "fr": { "one": "centime", "many": "centimes", "other": "centimes" },
       "es": { "one": "céntimo", "many": "céntimos", "other": "céntimos" },
       "it": { "one": "centesimo", "many": "centesimi", "other": "centesimi" },
-      "nl": { "one": "cent", "other": "cent" }
+      "nl": { "one": "cent", "other": "cent" },
+      "ja": { "one": "セント", "other": "セント" }
     },
     "GBP": {
-      "en": { "one": "penny", "other": "pence" }
+      "en": { "one": "penny", "other": "pence" },
+      "ja": { "one": "ペニー", "other": "ペンス" }
     },
     "JPY": null,
     "CNY": {
@@ -40,13 +42,15 @@
     },
     "HKD": {
       "zh": { "one": "分", "other": "分" },
-      "en": { "one": "cent", "other": "cents" }
+      "en": { "one": "cent", "other": "cents" },
+      "ja": { "one": "セント", "other": "セント" }
     },
     "SGD": {
       "en": { "one": "cent", "other": "cents" },
       "zh": { "one": "分", "other": "分" },
       "ms": { "one": "sen", "other": "sen" },
-      "ta": { "one": "காசு", "other": "காசு" }
+      "ta": { "one": "காசு", "other": "காசு" },
+      "ja": { "one": "セント", "other": "セント" }
     },
     "MYR": {
       "en": { "one": "sen", "other": "sen" },

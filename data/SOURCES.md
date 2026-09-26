@@ -116,6 +116,27 @@ incomplete. Flagging only, since the task was to verify claims:
 - **CHF**: the Romansh `rap` is missing.
 - **SGD**: the Tamil form is the only doubtful one; `en`, `zh`, `ms` are fine.
 
+## Japanese and Thai split readings (2026-09-26)
+
+`ja` and `th` changed from `split: false` to `split: true` in `data/overrides.json`,
+so a fraction now reads as major + subunit (e.g. 123米ドル45セント) instead of the
+decimal number reading. That requires a settled subunit word per currency. The
+`th` words were already present and confirmed; the `ja` words below were added.
+Japanese has no grammatical plural, so `one` and `other` are equal except for GBP,
+where the dictionary records both forms. CLDR's `ja` plural rule has only the
+`other` category, so the runtime currently emits `ペンス` for every count, including
+1 (the `ペニー` value is recorded for completeness and for a future plural strategy).
+
+| currency | language | value | verdict | source URL | note |
+| --- | --- | --- | --- | --- | --- |
+| USD | ja | one `セント`, other `セント` | confirmed | https://ja.wikipedia.org/wiki/アメリカ合衆国ドル | "補助通貨は、セント（記号は、¢またはc）で、1ドル = 100セント". The existing entry was correct; this adds a Japanese-language source. Also https://ja.wikipedia.org/wiki/セント_(通貨). |
+| EUR | ja | one `セント`, other `セント` | confirmed | https://ja.wikipedia.org/wiki/ユーロ | "補助単位はセントで、1ユーロは100セントに相当する。またユーロの補助単位としてのセントを特に別の通貨の補助単位としてのセントと区別するときにはユーロセントと呼び". `セント` is the unit; `ユーロセント` is the disambiguated variant. |
+| GBP | ja | one `ペニー`, other `ペンス` | confirmed | https://ja.wikipedia.org/wiki/スターリング・ポンド | "補助単位はペニー (penny/複数形: ペンス = pence) で、1971年より1ポンドは100ペンスである". Singular `ペニー`, plural `ペンス`. |
+| HKD | ja | one `セント`, other `セント` | confirmed | https://ja.wikipedia.org/wiki/香港ドル | "補助通貨単位はセント（Cent・略符号は￠）・ミル（mil）で、1ドル=100セント=1000ミル". |
+| SGD | ja | one `セント`, other `セント` | confirmed | https://ja.wikipedia.org/wiki/シンガポールドル | "補助単位はドルの100分の1のシンガポール・セント(単位記号 S￠)". |
+| THB | th | one `สตางค์`, other `สตางค์` | confirmed | https://en.wikipedia.org/wiki/Thai_baht | Already present: "divided into 100 satang (สตางค์)". The Thai part is read as บาท + สตางค์, not with จุด ("point"); see https://elon.io/grammar/thai/numbers/currency. |
+| CNY | ja | (none) | no source | https://ja.wikipedia.org/wiki/人民元 | Deliberately omitted. The yuan's 1/100 unit is `分` (`フェン`), not `セント`, and Japanese usage is not settled enough to assert a money reading. `ja-JP` + `CNY` therefore falls back to `decimal-name`; the fallback is pinned by a test. |
+
 ## Sources
 
 - https://en.wikipedia.org/wiki/Language_and_the_euro
@@ -149,3 +170,11 @@ incomplete. Flagging only, since the task was to verify claims:
 - https://en.glosbe.com/en/ta/Cent
 - https://www.duden.de/rechtschreibung/Cent
 - https://dle.rae.es/centavo
+- https://ja.wikipedia.org/wiki/アメリカ合衆国ドル
+- https://ja.wikipedia.org/wiki/ユーロ
+- https://ja.wikipedia.org/wiki/スターリング・ポンド
+- https://ja.wikipedia.org/wiki/香港ドル
+- https://ja.wikipedia.org/wiki/シンガポールドル
+- https://ja.wikipedia.org/wiki/セント_(通貨)
+- https://ja.wikipedia.org/wiki/人民元
+- https://elon.io/grammar/thai/numbers/currency
