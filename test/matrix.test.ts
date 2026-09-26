@@ -37,25 +37,12 @@ describe("matrix: every locale x currency", () => {
           .join("");
         expect(resolved.symbol, `${currency} symbol`).toBe(symbol);
 
-        // Independent of derive.ts: locate the part that equals CLDR's display
-        // name for the currency, rather than repeating the first-part logic.
-        const displayName = new Intl.DisplayNames([locale], { type: "currency" }).of(currency);
-        if (displayName) {
-          const nameParts = new Intl.NumberFormat(locale, {
-            style: "currency",
-            currency,
-            currencyDisplay: "name",
-          }).formatToParts(1);
-          const nameIndex = nameParts.findIndex(
-            (part) =>
-              part.type === "currency" && part.value.toLowerCase() === displayName.toLowerCase(),
-          );
-          const integerIndex = nameParts.findIndex((part) => part.type === "integer");
-          if (nameIndex !== -1 && integerIndex !== -1) {
-            expect(resolved.order, `${currency} order`).toBe(
-              nameIndex < integerIndex ? "prefix" : "suffix",
-            );
-          }
+        // The name must not be the symbol. Turkish resolved it to the symbol
+        // because CLDR renders symbol-then-name there, and nothing caught it.
+        // A name equal to the code is allowed only when it equals the symbol too
+        // (the runtime has no name, which `verbalizeMoney` warns about).
+        if (resolved.name.other !== resolved.code) {
+          expect(resolved.name.other, `${currency} name vs symbol`).not.toBe(resolved.symbol);
         }
 
         for (const amount of AMOUNTS) {

@@ -33,14 +33,6 @@ function currencyPart(locale: string, currency: string, value: number, fractionD
   return parts.at(-1)?.value ?? "";
 }
 
-/** Index of the last currency part, which is the name. */
-function namePartIndex(parts: Intl.NumberFormatPart[]): number {
-  for (let i = parts.length - 1; i >= 0; i -= 1) {
-    if (parts[i]?.type === "currency") return i;
-  }
-  return -1;
-}
-
 // Sample values used to obtain each CLDR plural form of a currency name. The
 // category of a value is not fixed by language: Russian puts 5 in `many` and
 // fractions in `other`, Arabic puts 2 in `two`, French puts fractions in
@@ -85,18 +77,6 @@ export function deriveSymbol(locale: string, currency: string): string {
     .filter((part) => part.type === "currency")
     .map((part) => part.value)
     .join("");
-}
-
-export function deriveOrder(locale: string, currency: string): "prefix" | "suffix" {
-  const parts = new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-    currencyDisplay: "name",
-  }).formatToParts(1);
-  const currencyIndex = namePartIndex(parts);
-  const integerIndex = parts.findIndex((part) => part.type === "integer");
-  if (currencyIndex === -1 || integerIndex === -1) return "suffix";
-  return currencyIndex < integerIndex ? "prefix" : "suffix";
 }
 
 /** CLDR's display fraction digits for the currency. Not always the ISO 4217 minor unit. */

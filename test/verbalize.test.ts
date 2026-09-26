@@ -176,10 +176,9 @@ describe("guards", () => {
 });
 
 describe("resolveCurrency", () => {
-  it("derives name, exponent and order", () => {
+  it("derives name, exponent and subunit", () => {
     const resolved = resolveCurrency("SGD", "en-SG");
     expect(resolved.exponent).toBe(2);
-    expect(resolved.order).toBe("suffix");
     expect(resolved.name.one).toBe("Singapore dollar");
     expect(resolved.name.other).toBe("Singapore dollars");
     expect(resolved.subunit?.other).toBe("cents");

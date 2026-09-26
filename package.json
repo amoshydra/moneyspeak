@@ -71,6 +71,7 @@
     "test:watch": "vitest",
     "compare:data": "node scripts/compare-data.mjs",
     "matrix:dump": "node scripts/dump-matrix.mjs",
+    "smoke": "node scripts/smoke.mjs",
     "docs": "vite docs",
     "docs:build": "vite build docs"
   },

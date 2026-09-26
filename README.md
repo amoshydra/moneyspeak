@@ -39,7 +39,7 @@ Returns `{ spoken, display, strategy, warnings }`.
 
 Also exported:
 
-- `resolveCurrency(currency, locale)` — the derived name, symbol, exponent, subunit, order; `sources` records where the values that can come from data (`name`, `exponent`, `subunit`) came from.
+- `resolveCurrency(currency, locale)` — the derived name, symbol, exponent and subunit; `sources` records where the values that can come from data (`name`, `exponent`, `subunit`) came from.
 - `parseMoney(text, locale, { currency })` — best-effort read of a formatted amount.
 
 DOM helpers, in `moneyspeak/dom`:
@@ -67,7 +67,7 @@ A subunit resolves from the language's word for the currency's kind, or, when th
 
 ## Data
 
-Everything derivable comes from `Intl` at runtime: the name (singular and plural), symbol, order, digits and exponent.
+Everything derivable comes from `Intl` at runtime: the name (singular and plural), symbol, digits and exponent.
 
 Three files hold the resolution data:
 
@@ -107,6 +107,7 @@ pnpm test          # vitest, includes the full locale x currency matrix
 pnpm build         # tsdown, ESM and CJS
 pnpm typecheck     # tsc --noEmit
 pnpm docs          # Vite docs app
+pnpm smoke         # pack, install the tarball, load it as a consumer would
 pnpm compare:data  # data vs CLDR and ISO 4217, exits non-zero on a gap
 pnpm matrix:dump   # full matrix for review when the runtime or data changes
 ```

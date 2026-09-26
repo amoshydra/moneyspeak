@@ -61,9 +61,6 @@ export interface ResolvedCurrency {
   exponent: number;
   name: PluralForms;
   subunit: PluralForms | null;
-  /** Whether the locale's currency display name comes before the number.
-   *  Informational: the spoken builders place the name after the number. */
-  order: "prefix" | "suffix";
   /** Whether this locale naturally splits an amount into major and minor units. */
   split: boolean;
   connector: string;
