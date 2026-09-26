@@ -393,3 +393,413 @@ The stale "ko has no cent entry" comment in `test/verbalize.test.ts` was correct
 in a later pass: the test now asserts that a curated language uses its own word
 (`ko-KR` `USD` -> `센트`), and that an uncurated kind uses the international name
 (`ko-KR` `SEK` -> `øre`).
+
+## Matrix subunit pass (2026-09-26)
+
+Second fill pass over the `(language, kind)` grid. Scope was every cell still
+empty, in the order the task set: `tr` `cent`/`eurocent`, then `lo`/`my` `cent`,
+then the Indic `cent` cells, then the remaining per-language gaps for `paisa`,
+`poysha`, `satang`, `sen`, `fen`, `sentimo`, `penny`, `fils`. The method is the
+one the previous pass used: read the target-language Wikipedia article for a
+currency that uses the kind and take its infobox `subunit_name_N` (or the local
+parameter name) or the prose where it gives the number form. Nothing here is
+machine translated, taken from a bare search result, or invented.
+
+Filled this pass: **111 cells** (33 languages x 13 kinds = 429; **206 covered,
+223 still empty**). Where a source gives only one number form, that form fills
+every CLDR category the language needs. Where the source distinguishes a plural,
+it is recorded; for a language whose CLDR rule has only `other`, the singular is
+stored under `other`.
+
+### Turkish (tr) — CLDR: one, other
+
+Turkish is now in the example matrix, so its whole matrix-reachable set was
+filled rather than just `cent`.
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| cent | `sent` | https://tr.wikipedia.org/wiki/Euro | Infobox `altbirim_adı_1 = [[Cent\|Sent]]`; the dollar article's infobox writes `Cent`, the euro article gives the Turkish spelling `Sent`. |
+| eurocent | `sent` | https://tr.wikipedia.org/wiki/Euro | Same infobox, the euro's own subunit. |
+| fen | `Fen` | https://tr.wikipedia.org/wiki/Renminbi | Prose "10 Jiao(角) = 100 Fen(分)". |
+| paisa | `paisa` | https://tr.wikipedia.org/wiki/Hindistan_rupisi | Infobox `altbirim_adı_1 = paisa`. |
+| poysha | `poişa` | https://tr.wikipedia.org/wiki/Bangladeş_takası | Prose "alt birimi ''poişa'' (পয়সা)". |
+| satang | `satang` | https://tr.wikipedia.org/wiki/Tayland_bahtı | Prose "alt birimi ''satang''". |
+| sen | `sen` | https://tr.wikipedia.org/wiki/Ringgit | Prose "alt birimi ''sen''". |
+| sentimo | `sentimo` | https://tr.wikipedia.org/wiki/Filipinler_pesosu | Infobox `altbirim_adı_1 = Séntimo`; the accent is a transcription artifact, normalized to Turkish spelling. |
+| fils | `fils` | https://tr.wikipedia.org/wiki/Kuveyt_dinarı | Infobox `altbirim_adı_1 = fils`. |
+
+`kurus` was already present. `tr.penny` was left out: the pound article's
+infobox uses the English word `penny` verbatim, with no Turkish form.
+
+### Lao (lo) and Burmese (my) — CLDR: other
+
+Both languages had no entry at all and read pure English. Each gets `cent`; no
+other kind is named in their Wikipedia pages.
+
+| language | kind | word | source URL | note |
+| --- | --- | --- | --- | --- |
+| lo | cent | `ເຊັນ` | https://lo.wikipedia.org/wiki/ໂດລາສະຫະລັດ | Coin table "1 ເຊັນ", "5 ເຊັນ", ...; "1 ເຊັນ ວ່າ ເພນນີ". |
+| my | cent | `ဆင့်` | https://my.wikipedia.org/wiki/အမေရိကန်ဒေါ်လာ | "တစ်ဒေါ်လာ တွင် ဆင့် ၁၀၀ ပါရှိသည်" (a dollar has 100 cents). |
+
+The Burmese Singapore/Hong Kong articles spell the same word `စင့်`
+(https://my.wikipedia.org/wiki/စင်ကာပူဒေါ်လာ); the US-dollar spelling `ဆင့်`
+was recorded because `cent` is represented by that currency.
+
+### Gujarati (gu) — CLDR: one, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| cent | `સેંટ` | https://gu.wikipedia.org/wiki/સિંગાપુર | "સિંગાપુર ડૉલર અને સેંટ ના સિક્કા પર ...". Gujarati does not mark a plural on the loanword, so one form fills both. |
+
+`gu` has no dedicated dollar/euro article; the Singapore country page is the
+attesting source.
+
+### Filipino (fil) — CLDR: one, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| cent | `sentimo` | https://tl.wikipedia.org/wiki/Dolyar_ng_Hongkong | "Nahahati ang dolyar sa 100 mga sentimo." Same word as the peso subunit; invariant after a numeral. |
+
+### German (de) — CLDR: one, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| fen | `Fen` | https://de.wikipedia.org/wiki/Renminbi | "Untereinheiten ... ''Fen'' (分)". |
+
+### French (fr) — CLDR: one, many, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| penny | one `penny`, many/other `pence` | https://fr.wikipedia.org/wiki/Livre_sterling | Infobox "100 pence (singulier : penny)". |
+| fen | `fen` | https://fr.wikipedia.org/wiki/Yuan | Infobox "jiao (1/10), fen (1/100)". |
+| paisa | `paisa` | https://fr.wikipedia.org/wiki/Roupie_indienne | Infobox "100 paisa". |
+| poysha | one `poisha`, many/other `poishas` | https://fr.wikipedia.org/wiki/Taka | "1 taka = 100 poishas". |
+| satang | one `satang`, many/other `satangs` | https://fr.wikipedia.org/wiki/Baht | "100 สตางค์ (satangs)". |
+| sen | `sen` | https://fr.wikipedia.org/wiki/Ringgit | Infobox "sen". |
+| sentimo | `sentimo` | https://fr.wikipedia.org/wiki/Peso_philippin | Infobox "sentimo". |
+| fils | `fils` | https://fr.wikipedia.org/wiki/Dinar_koweïtien | "1 dinar = 1000 fils". |
+
+### Spanish (es) — CLDR: one, many, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| penny | one `penique`, many/other `peniques` | https://es.wikipedia.org/wiki/Libra_esterlina | Infobox "100 peniques". |
+| fen | `fen` | https://es.wikipedia.org/wiki/Renminbi | Infobox "100 fen". |
+| paisa | one `paisa`, many/other `paisas` | https://es.wikipedia.org/wiki/Rupia_india | Infobox "100 paisa (plural: paisas)". |
+| poysha | `poisha` | https://es.wikipedia.org/wiki/Taka_bangladesí | Infobox "100 poisha"; no plural recorded, so one form. |
+| satang | `satang` | https://es.wikipedia.org/wiki/Bat_tailandés | Infobox "100 satang". |
+| sen | `sen` | https://es.wikipedia.org/wiki/Ringgit | Infobox "100 sen". |
+| sentimo | one `céntimo`, many/other `céntimos` | https://es.wikipedia.org/wiki/Peso_filipino | Infobox "100 céntimos"; Spanish names the Philippine centavo `céntimo`. |
+| fils | `fils` | https://es.wikipedia.org/wiki/Dinar_kuwaití | Infobox "1000 fils". |
+
+### Italian (it) — CLDR: one, many, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| penny | one `penny`, many/other `pence` | https://it.wikipedia.org/wiki/Sterlina_britannica | Infobox `frazioni = 100 pence (sing. penny)`. |
+| fen | `fen` | https://it.wikipedia.org/wiki/Renminbi_cinese | Infobox `frazioni = 10 jiao ... 100 fen`. |
+| paisa | `paisa` | https://it.wikipedia.org/wiki/Rupia_indiana | Infobox `frazioni = paisa (1/100)`; the Pakistani page spells the plural `paise`. |
+| poysha | `poisha` | https://it.wikipedia.org/wiki/Taka_bangladese | Infobox `frazioni = poisha (1/100)`. |
+| satang | `satang` | https://it.wikipedia.org/wiki/Baht_thailandese | Infobox `frazioni = satang 1/100`. |
+| sen | `sen` | https://it.wikipedia.org/wiki/Ringgit_malese | Infobox `frazioni = sen (1/100)`. |
+| sentimo | `sentimo` | https://it.wikipedia.org/wiki/Peso_filippino | Infobox `frazioni = 100 sentimo`. |
+| fils | `fils` | https://it.wikipedia.org/wiki/Dinaro_kuwaitiano | Infobox `frazioni = fils (1/1000)`. |
+
+### Dutch (nl) — CLDR: one, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| paisa | `paisa` | https://nl.wikipedia.org/wiki/Nepalese_roepie | "Eén roepie is honderd paisa." |
+| poysha | `poisha` | https://nl.wikipedia.org/wiki/Bengalese_taka | "Eén taka is honderd poisha." |
+| fils | `fils` | https://nl.wikipedia.org/wiki/Koeweitse_dinar | "Eén dinar is duizend fils." |
+
+### Swedish (sv) — CLDR: one, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| cent | `cent` | https://sv.wikipedia.org/wiki/Singaporiansk_dollar | "1 dollar delas i 100 cent." |
+| penny | one `penny`, other `pence` | https://sv.wikipedia.org/wiki/Pound_sterling | Infobox `delas i = 100 pence`; "singularform: penny". |
+| fen | `fen` | https://sv.wikipedia.org/wiki/Renminbi | Infobox `delas i = 100 fen`. |
+| paisa | `paisa` | https://sv.wikipedia.org/wiki/Taka | "1 Taka = 100 paisa." |
+| fils | `fils` | https://sv.wikipedia.org/wiki/Kuwaitisk_dinar | "1 Dinar = 1000 fils." |
+
+### Norwegian Bokmål (nb) — CLDR: one, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| cent | `cent` | https://nb.wikipedia.org/wiki/Singaporsk_dollar | "den deles i 100 cent." |
+| satang | `satang` | https://nb.wikipedia.org/wiki/Thailandsk_baht | "1 baht = 100 satang." |
+
+### Danish (da) — CLDR: one, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| cent | `Cent` | https://da.wikipedia.org/wiki/Amerikanske_dollar | Infobox `underenhed_navn_2 = Cent`; "opdelt i 100 ''cent''". |
+| eurocent | `cent` | https://da.wikipedia.org/wiki/Euro | Infobox `underenhed_navn_1 = cent`. |
+| fen | `fen` | https://da.wikipedia.org/wiki/Renminbi | "deles op i 10 ''jiao'' ... igen opdelt i 10 ''fen''". |
+| penny | one `penny`, other `pence` | https://da.wikipedia.org/wiki/Britiske_pund | Infobox `underenhed_navn_1 = penny`, `pluralis_underenhed_1 = pence`. |
+| fils | `fils` | https://da.wikipedia.org/wiki/Kuwaitiske_dinarer | "Der går 1000 fils på en KWD." |
+
+### Indonesian (id) — CLDR: other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| eurocent | `sen` | https://id.wikipedia.org/wiki/Euro | Infobox `subunit_name_1 = sen`. |
+| fen | `fen` | https://id.wikipedia.org/wiki/Renminbi | Infobox `subunit_name_2 = 分 (fen)`. |
+| paisa | `paisa` | https://id.wikipedia.org/wiki/Rupee_India | Infobox `subunit_name_1 = Paisa`. |
+| poysha | `poisha` | https://id.wikipedia.org/wiki/Taka_Bangladesh | Infobox `subunit_name_1 = Poisha`. |
+| satang | `satang` | https://id.wikipedia.org/wiki/Baht | Infobox `subunit_name_1 = satang`. |
+| sentimo | `sentimo` | https://id.wikipedia.org/wiki/Peso_Filipina | Infobox `subunit_name_1 = sentimo (atau centavo)`. |
+| fils | `filis` | https://id.wikipedia.org/wiki/Dinar_Kuwait | Infobox `subunit_name_1 = filis (فلس)`. |
+
+### Malay (ms) — CLDR: other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| eurocent | `sen` | https://ms.wikipedia.org/wiki/Euro | Infobox `subunit_name_1 = Sen`. |
+| paisa | `paisa` | https://ms.wikipedia.org/wiki/Rupee_India | Infobox `subunit_name_1 = paisa`. |
+| satang | `satang` | https://ms.wikipedia.org/wiki/Baht_Thailand | Infobox `subunit_name_1 = satang`. |
+| sentimo | `sentimo` | https://ms.wikipedia.org/wiki/Peso_Filipina | Infobox `subunit_name_1 = sentimo`. |
+| penny | `peni` | https://ms.wikipedia.org/wiki/Paun_sterling | Infobox local param `nama_subunit_1 = peni`. |
+
+### Thai (th) — CLDR: other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| eurocent | `เซ็นต์` | https://th.wikipedia.org/wiki/ยูโร | Infobox `subunit_name_1 = เซ็นต์`. |
+| penny | `เพนนี` | https://th.wikipedia.org/wiki/ปอนด์สเตอร์ลิง | Infobox `subunit_name_1 = เพนนี`, plural `เพนซ์`; Thai has no plural category, so `other` holds the singular. |
+| fen | `เฟิน` | https://th.wikipedia.org/wiki/เหรินหมินปี้ | Infobox `subunit_name_3 = เฟิน (分)`. |
+| paisa | `ไปซา` | https://th.wikipedia.org/wiki/รูปีปากีสถาน | Infobox `subunit_name_1 = ไปซา`; the Indian page spells it `ไปเซ`. |
+| poysha | `ปอยชา` | https://th.wikipedia.org/wiki/ฏากา | Infobox `subunit_name_1 = ปอยชา`. |
+| sen | `เซ็น` | https://th.wikipedia.org/wiki/ริงกิต | Infobox `subunit_name_1 = เซ็น`. |
+| sentimo | `เซนติโม` | https://th.wikipedia.org/wiki/เปโซฟิลิปปินส์ | Infobox `subunit_name_1 = เซนติโม`. |
+| fils | `ฟิลส์` | https://th.wikipedia.org/wiki/ดีนาร์คูเวต | Infobox `subunit_name_1 = ฟิลส์`. |
+
+### Tamil (ta) — CLDR: one, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| eurocent | `சதம்` | https://ta.wikipedia.org/wiki/ஐரோ | Infobox `subunit_name_1 = சதம்`. |
+| fen | `ஃபன்` | https://ta.wikipedia.org/wiki/ரென்மின்பி | Infobox `subunit_name_2 = ஃபன் (分)`. |
+| satang | `சடாங்` | https://ta.wikipedia.org/wiki/தாய்லாந்தின்_பாட் | Infobox `subunit_name_1 = சடாங்`. |
+| sen | `சென்` | https://ta.wikipedia.org/wiki/மலேசிய_ரிங்கிட் | Infobox `subunit_name_1 = சென்`. |
+| penny | `பென்னி` | https://ta.wikipedia.org/wiki/பிரித்தானிய_பவுண்டு | Infobox `subunit_name_1 = பென்னி`. |
+| fils | `பில்சு` | https://ta.wikipedia.org/wiki/குவைத்_தினார் | Infobox `subunit_name_1 = பில்சு`. |
+
+Tamil has no grammatical plural on these loans, so one form fills both.
+
+### Marathi (mr) — CLDR: one, other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| sen | `सेन` | https://mr.wikipedia.org/wiki/मलेशियन_रिंगिट | Infobox `विभाजन = १/१०० सेन`. |
+| penny | `पेनी` | https://mr.wikipedia.org/wiki/ब्रिटिश_पाउंड | Infobox `विभाजन = १/१०० पेनी`. |
+| sentimo | `सेंटिमो` | https://mr.wikipedia.org/wiki/फिलिपिन_पेसो | Infobox `विभाजन = १/१०० (सेंटिमो)`. |
+
+### Punjabi (pa), Bengali (bn), Hindi (hi), Urdu (ur)
+
+| language | kind | word | source URL | note |
+| --- | --- | --- | --- | --- |
+| pa | fils | `ਫ਼ਿਲਸ` | https://pa.wikipedia.org/wiki/ਕੁਵੈਤੀ_ਦਿਨਾਰ | Infobox `subunit_name_1 = ਫ਼ਿਲਸ`. |
+| bn | fils | `ফিলস` | https://bn.wikipedia.org/wiki/কুয়েতি_দিনার | Infobox `subunit_name_1 = ফিলস`. |
+| hi | fils | `फिल्स` | https://hi.wikipedia.org/wiki/कुवैती_दीनार | Infobox `subunit_name_1 = फिल्स`. |
+| ur | sen | `سین` | https://ur.wikipedia.org/wiki/انڈونیشیائی_روپیہ | Infobox `subunit_name_1 = سین`. |
+
+### Vietnamese (vi) — CLDR: other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| fen | `fen` | https://vi.wikipedia.org/wiki/Nhân_dân_tệ | Infobox `subunit_name_2 = fen (分)`. |
+| paisa | `paisa` | https://vi.wikipedia.org/wiki/Rupee_Ấn_Độ | Infobox `subunit_name_1 = paisa`. |
+| satang | `satang` | https://vi.wikipedia.org/wiki/Baht | Infobox `subunit_name_1 = satang`. |
+| sen | `sen` | https://vi.wikipedia.org/wiki/Ringgit | Infobox `subunit_name_1 = sen`. |
+| penny | `xu` | https://vi.wikipedia.org/wiki/Bảng_Anh | "Một bảng Anh gồm 100 xu (pence hoặc penny)". |
+
+### Chinese (zh) and Cantonese (yue) — CLDR: other
+
+| language | kind | word | source URL | note |
+| --- | --- | --- | --- | --- |
+| zh | eurocent | `欧分` | https://zh.wikipedia.org/wiki/欧元 | Infobox `subunit_name_1 = 欧分`. |
+| zh | penny | `便士` | https://zh.wikipedia.org/wiki/英镑 | Infobox `subunit_name_1 = 便士`. |
+| zh | poysha | `派沙` | https://zh.wikipedia.org/wiki/孟加拉塔卡 | Infobox `subunit_name_1 = 派沙`. |
+| zh | satang | `撒丹` | https://zh.wikipedia.org/wiki/泰銖 | Infobox `subunit_name_1 = 撒丹`. |
+| zh | sen | `仙` | https://zh.wikipedia.org/wiki/馬來西亞令吉 | Infobox `subunit_name_1 = 仙 (sen)`. |
+| zh | sentimo | `仙塔沃` | https://zh.wikipedia.org/wiki/菲律賓披索 | Infobox `subunit_name_1 = 仙塔沃 (centavo), 菲律賓語 sentimo`. |
+| yue | penny | `便士` | https://yue.wikipedia.org/wiki/英鎊 | Infobox `subunit_name_1 = 便士`. |
+| yue | sen | `仙` | https://yue.wikipedia.org/wiki/令吉 | Infobox `subunit_name_1 = 仙（sen）`. |
+
+### Japanese (ja) — CLDR: other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| paisa | `パイサ` | https://ja.wikipedia.org/wiki/インド・ルピー | Infobox `subunit_name_1 = パイサ`. |
+| poysha | `ポイシャ` | https://ja.wikipedia.org/wiki/タカ_(通貨) | Infobox `subunit_name_1 = ポイシャ`. |
+| satang | `サタン` | https://ja.wikipedia.org/wiki/バーツ | Infobox `subunit_name_1 = サタン`. |
+| sen | `セン` | https://ja.wikipedia.org/wiki/リンギット | Infobox `subunit_name_1 = セン`. |
+| sentimo | `センタボ` | https://ja.wikipedia.org/wiki/フィリピン・ペソ | The peso's subunit is `センタボ` (centavo), the Japanese word for it. |
+| fils | `フィルス` | https://ja.wikipedia.org/wiki/クウェート・ディナール | Infobox `subunit_name_1 = フィルス`. |
+
+### Korean (ko) — CLDR: other
+
+| kind | word | source URL | note |
+| --- | --- | --- | --- |
+| paisa | `파이사` | https://ko.wikipedia.org/wiki/인도_루피 | Infobox `보조단위_이름_1 = 파이사`. |
+| poysha | `파이사` | https://ko.wikipedia.org/wiki/방글라데시_타카 | Infobox `보조단위_이름_1 = 파이사 (poysha)`. |
+| satang | `사땅` | https://ko.wikipedia.org/wiki/태국_밧 | Infobox `보조단위_이름_1 = 사땅 (satang)`. |
+| sen | `센` | https://ko.wikipedia.org/wiki/말레이시아_링깃 | Infobox `보조단위_이름_1 = 센(sen)`. |
+| sentimo | `센티모` | https://ko.wikipedia.org/wiki/필리핀_페소 | Infobox `보조단위_이름_1 = 센티모`. |
+| fils | `필스` | https://ko.wikipedia.org/wiki/쿠웨이트_디나르 | Infobox `보조단위_이름_1 = 필스`. |
+
+`ko.ore` was deliberately **not** added: it would replace the international
+`øre` that `test/verbalize.test.ts` asserts for `ko-KR` `SEK`.
+
+### New sources
+
+- https://tr.wikipedia.org/wiki/Euro
+- https://tr.wikipedia.org/wiki/Renminbi
+- https://tr.wikipedia.org/wiki/Hindistan_rupisi
+- https://tr.wikipedia.org/wiki/Bangladeş_takası
+- https://tr.wikipedia.org/wiki/Tayland_bahtı
+- https://tr.wikipedia.org/wiki/Ringgit
+- https://tr.wikipedia.org/wiki/Filipinler_pesosu
+- https://tr.wikipedia.org/wiki/Kuveyt_dinarı
+- https://lo.wikipedia.org/wiki/ໂດລາສະຫະລັດ
+- https://my.wikipedia.org/wiki/အမေရိကန်ဒေါ်လာ
+- https://my.wikipedia.org/wiki/စင်ကာပူဒေါ်လာ
+- https://gu.wikipedia.org/wiki/સિંગાપુર
+- https://tl.wikipedia.org/wiki/Dolyar_ng_Hongkong
+- https://de.wikipedia.org/wiki/Renminbi
+- https://fr.wikipedia.org/wiki/Livre_sterling
+- https://fr.wikipedia.org/wiki/Yuan
+- https://fr.wikipedia.org/wiki/Roupie_indienne
+- https://fr.wikipedia.org/wiki/Taka
+- https://fr.wikipedia.org/wiki/Baht
+- https://fr.wikipedia.org/wiki/Ringgit
+- https://fr.wikipedia.org/wiki/Peso_philippin
+- https://fr.wikipedia.org/wiki/Dinar_koweïtien
+- https://es.wikipedia.org/wiki/Libra_esterlina
+- https://es.wikipedia.org/wiki/Renminbi
+- https://es.wikipedia.org/wiki/Rupia_india
+- https://es.wikipedia.org/wiki/Taka_bangladesí
+- https://es.wikipedia.org/wiki/Bat_tailandés
+- https://es.wikipedia.org/wiki/Ringgit
+- https://es.wikipedia.org/wiki/Peso_filipino
+- https://es.wikipedia.org/wiki/Dinar_kuwaití
+- https://it.wikipedia.org/wiki/Sterlina_britannica
+- https://it.wikipedia.org/wiki/Renminbi_cinese
+- https://it.wikipedia.org/wiki/Rupia_indiana
+- https://it.wikipedia.org/wiki/Taka_bangladese
+- https://it.wikipedia.org/wiki/Baht_thailandese
+- https://it.wikipedia.org/wiki/Ringgit_malese
+- https://it.wikipedia.org/wiki/Peso_filippino
+- https://it.wikipedia.org/wiki/Dinaro_kuwaitiano
+- https://nl.wikipedia.org/wiki/Nepalese_roepie
+- https://nl.wikipedia.org/wiki/Bengalese_taka
+- https://nl.wikipedia.org/wiki/Koeweitse_dinar
+- https://sv.wikipedia.org/wiki/Singaporiansk_dollar
+- https://sv.wikipedia.org/wiki/Pound_sterling
+- https://sv.wikipedia.org/wiki/Renminbi
+- https://sv.wikipedia.org/wiki/Taka
+- https://sv.wikipedia.org/wiki/Kuwaitisk_dinar
+- https://nb.wikipedia.org/wiki/Singaporsk_dollar
+- https://nb.wikipedia.org/wiki/Thailandsk_baht
+- https://da.wikipedia.org/wiki/Amerikanske_dollar
+- https://da.wikipedia.org/wiki/Euro
+- https://da.wikipedia.org/wiki/Renminbi
+- https://da.wikipedia.org/wiki/Britiske_pund
+- https://da.wikipedia.org/wiki/Kuwaitiske_dinarer
+- https://id.wikipedia.org/wiki/Euro
+- https://id.wikipedia.org/wiki/Renminbi
+- https://id.wikipedia.org/wiki/Rupee_India
+- https://id.wikipedia.org/wiki/Taka_Bangladesh
+- https://id.wikipedia.org/wiki/Baht
+- https://id.wikipedia.org/wiki/Peso_Filipina
+- https://id.wikipedia.org/wiki/Dinar_Kuwait
+- https://ms.wikipedia.org/wiki/Euro
+- https://ms.wikipedia.org/wiki/Rupee_India
+- https://ms.wikipedia.org/wiki/Baht_Thailand
+- https://ms.wikipedia.org/wiki/Peso_Filipina
+- https://ms.wikipedia.org/wiki/Paun_sterling
+- https://th.wikipedia.org/wiki/ยูโร
+- https://th.wikipedia.org/wiki/ปอนด์สเตอร์ลิง
+- https://th.wikipedia.org/wiki/เหรินหมินปี้
+- https://th.wikipedia.org/wiki/รูปีปากีสถาน
+- https://th.wikipedia.org/wiki/ฏากา
+- https://th.wikipedia.org/wiki/ริงกิต
+- https://th.wikipedia.org/wiki/เปโซฟิลิปปินส์
+- https://th.wikipedia.org/wiki/ดีนาร์คูเวต
+- https://ta.wikipedia.org/wiki/ஐரோ
+- https://ta.wikipedia.org/wiki/ரென்மின்பி
+- https://ta.wikipedia.org/wiki/தாய்லாந்தின்_பாட்
+- https://ta.wikipedia.org/wiki/மலேசிய_ரிங்கிட்
+- https://ta.wikipedia.org/wiki/பிரித்தானிய_பவுண்டு
+- https://ta.wikipedia.org/wiki/குவைத்_தினார்
+- https://mr.wikipedia.org/wiki/मलेशियन_रिंगिट
+- https://mr.wikipedia.org/wiki/ब्रिटिश_पाउंड
+- https://mr.wikipedia.org/wiki/फिलिपिन_पेसो
+- https://pa.wikipedia.org/wiki/ਕੁਵੈਤੀ_ਦਿਨਾਰ
+- https://bn.wikipedia.org/wiki/কুয়েতি_দিনার
+- https://hi.wikipedia.org/wiki/कुवैती_दीनार
+- https://ur.wikipedia.org/wiki/انڈونیشیائی_روپیہ
+- https://vi.wikipedia.org/wiki/Nhân_dân_tệ
+- https://vi.wikipedia.org/wiki/Rupee_Ấn_Độ
+- https://vi.wikipedia.org/wiki/Baht
+- https://vi.wikipedia.org/wiki/Ringgit
+- https://vi.wikipedia.org/wiki/Bảng_Anh
+- https://zh.wikipedia.org/wiki/欧元
+- https://zh.wikipedia.org/wiki/英镑
+- https://zh.wikipedia.org/wiki/孟加拉塔卡
+- https://zh.wikipedia.org/wiki/泰銖
+- https://zh.wikipedia.org/wiki/馬來西亞令吉
+- https://zh.wikipedia.org/wiki/菲律賓披索
+- https://yue.wikipedia.org/wiki/英鎊
+- https://yue.wikipedia.org/wiki/令吉
+- https://ja.wikipedia.org/wiki/インド・ルピー
+- https://ja.wikipedia.org/wiki/タカ_(通貨)
+- https://ja.wikipedia.org/wiki/バーツ
+- https://ja.wikipedia.org/wiki/リンギット
+- https://ja.wikipedia.org/wiki/フィリピン・ペソ
+- https://ja.wikipedia.org/wiki/クウェート・ディナール
+- https://ko.wikipedia.org/wiki/인도_루피
+- https://ko.wikipedia.org/wiki/방글라데시_타카
+- https://ko.wikipedia.org/wiki/태국_밧
+- https://ko.wikipedia.org/wiki/말레이시아_링깃
+- https://ko.wikipedia.org/wiki/필리핀_페소
+- https://ko.wikipedia.org/wiki/쿠웨이트_디나르
+
+### Cells deliberately left out this pass
+
+Every cell below was checked and no target-language Wikipedia article (or other
+acceptable source) names the word in the language's own script. The
+international-name tier covers them. This is the reason the uncovered count is
+still 223; many are shared by every language of a script family.
+
+- **`kn.cent`**: the Kannada dollar article's infobox uses the Latin `Cent`
+  (`subunit_name_2 = Cent`), not a Kannada word. Only a kn.wikiquote
+  quotation translation uses `ಸೆಂಟ್`, which is not an authoritative lexical
+  source, so it was not used.
+- **`sv.eurocent`, `nb.eurocent`, `nb.fen`, `nb.paisa`, `nb.penny`,
+  `nb.poysha`, `nb.sen`, `nb.sentimo`**: the Swedish and Norwegian Bokmål
+  articles carry no in-language subunit line for these kinds.
+- **`en.poysha`, `en.fils`, `en.kurus`**: English's own words are the
+  international names already in `subunit-kinds.json`, so an entry would add
+  nothing.
+- **`nl.fen`, `nl.penny`, `nl.satang`, `nl.sen`, `nl.sentimo`** and
+  **`sv.satang`, `sv.sen`, `sv.sentimo`, `sv.poysha`**: the Dutch and Swedish
+  articles give no in-language subunit line for these.
+- **Indic script families** (`bn`, `gu`, `hi`, `kn`, `ml`, `mr`, `ne`, `pa`,
+  `ta`, `te`) for `fen`, `poysha`, `satang`, `sentimo`, etc.: the local articles
+  either have no page for the currency or give the subunit only in Latin
+  (`fen`, `Sentimo`, `satang`). Left out rather than transliterated by hand.
+- **`ja.fen`**: deliberately still omitted. The Renminbi article names the
+  1/100 unit `分`, but the previous pass concluded Japanese money usage is not
+  settled enough to assert a reading, and that decision is kept here.
+- **`ko.ore`**: kept out so the `ko-KR` `SEK` test continues to assert the
+  international `øre`.
+- **Semitic/Arabic-script `fils`/`sen`** for `ur` when the page gives only the
+  Latin form, and `my`/`km`/`lo` for every kind their pages do not name: no
+  in-script word found.
+- **`ore`, `franccent`, `kurus`** for languages other than their home locales:
+  not in the priority set for this pass; the existing coverage
+  (`sv`/`nb`/`da`/`en` `ore`, `de`/`fr`/`it` `franccent`, `tr` `kurus`) is
+  unchanged.
