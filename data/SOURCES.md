@@ -803,3 +803,37 @@ still 223; many are shared by every language of a script family.
   not in the priority set for this pass; the existing coverage
   (`sv`/`nb`/`da`/`en` `ore`, `de`/`fr`/`it` `franccent`, `tr` `kurus`) is
   unchanged.
+
+## Redundancy pass (2026-09-26)
+
+A cell is dead weight when every plural form it supplies is byte-identical to the
+international fallback for the same kind: the fourth tier would produce the same
+string, so the cell adds a claim to maintain and nothing to the output. 51 of the
+206 cells were removed on that rule, taking `subunits.json` to **155 cells, 33
+languages** (155 of 429 grid cells; the "223 uncovered" figure above predates
+this pass, so the current uncovered count is 274).
+
+The removal was verified, not assumed. `pnpm matrix:dump` over the full locale x
+currency surface is 4444 lines and is byte-identical before and after the
+deletion; only the dump timestamp differs.
+
+Removed: `en` `cent`, `eurocent`, `penny`, `fen`, `paisa`, `satang`, `sen`,
+`franccent` (the whole English block, since its words are the fallback); `fr`
+`cent`, `franccent`, `penny`, `fen`, `sen`, `sentimo`, `fils`; `es` `fen`,
+`satang`, `sen`, `fils`; `it` `penny`, `fen`, `satang`, `sen`, `sentimo`,
+`fils`; `nl` `fils`; `id` `sen`, `fen`, `satang`, `sentimo`; `ms` `sen`,
+`satang`, `sentimo`; `sv` `penny`, `fen`, `fils`; `nb` `ore`, `satang`; `da`
+`ore`, `fen`, `penny`, `fils`; `fil` `sentimo`; `vi` `fen`, `satang`, `sen`;
+`tr` `kurus`, `satang`, `sen`, `sentimo`, `fils`.
+
+Two consequences worth recording:
+
+- `kurus` now has no language word at all, so it is resolved by the
+  international name, which is `kuruş`. Turkish is unaffected, and
+  `compare:data` now reports `kurus` as the one kind with no language word.
+- `nb.ore` and `da.ore` are gone; Norwegian and Danish read the fallback `øre`,
+  the same word. `sv.ore` stays because Swedish `öre` differs from the fallback
+  `øre` by one character.
+
+The sections above still document words that are no longer in `subunits.json`.
+They are kept as the record of the sourcing decision rather than edited away.
