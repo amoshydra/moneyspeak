@@ -56,7 +56,9 @@
       }
     },
     "./data/subunits.json": "./data/subunits.json",
-    "./data/overrides.json": "./data/overrides.json"
+    "./data/subunit-kinds.json": "./data/subunit-kinds.json",
+    "./data/overrides.json": "./data/overrides.json",
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",

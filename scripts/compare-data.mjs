@@ -13,7 +13,9 @@ import { dirname, join } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const subunits = JSON.parse(readFileSync(join(root, "data/subunits.json"), "utf8")).subunits;
-const kinds = JSON.parse(readFileSync(join(root, "data/subunit-kinds.json"), "utf8")).kinds;
+const kindFile = JSON.parse(readFileSync(join(root, "data/subunit-kinds.json"), "utf8"));
+const kinds = kindFile.kinds;
+const kindNames = kindFile.names;
 const overrides = JSON.parse(readFileSync(join(root, "data/overrides.json"), "utf8"));
 
 // ISO 4217 minor units, from the standard's "Minor unit" column.
@@ -22,6 +24,14 @@ const ISO_MINOR_UNITS = {
   USD: 2, EUR: 2, GBP: 2, JPY: 0, CNY: 2, TWD: 2, HKD: 2, SGD: 2, MYR: 2,
   IDR: 2, INR: 2, THB: 2, KRW: 0, VND: 0, AUD: 2, CAD: 2, NZD: 2, CHF: 2,
   ZAR: 2, PHP: 2, SEK: 2, NOK: 2, DKK: 2, KWD: 3, CLF: 4, ISK: 0,
+  LKR: 2, KHR: 2, LAK: 2, MMK: 2,
+};
+
+// Currencies where ISO 4217 names a minor unit that is no longer in use, so the
+// spoken form deliberately has none and CLDR's 0 is kept.
+const NO_SUBUNIT_IN_PRACTICE = {
+  LAK: "the att is no longer in regular use",
+  MMK: "the pya is no longer in regular use",
 };
 
 const categoriesFor = (locale) =>
@@ -58,14 +68,19 @@ for (const currency of Object.keys(ISO_MINOR_UNITS)) {
   const iso = ISO_MINOR_UNITS[currency];
   const override = overrides.exponent?.[currency];
   if (intlDigits !== iso) {
-    mismatch.push({ currency, intlDigits, iso, override });
+    mismatch.push({ currency, intlDigits, iso, override, note: NO_SUBUNIT_IN_PRACTICE[currency] });
   }
 }
 if (mismatch.length === 0) {
   console.log("  no mismatches\n");
 } else {
   for (const row of mismatch) {
-    const handled = row.override === row.iso ? "overridden" : "NOT overridden";
+    const handled =
+      row.override === row.iso
+        ? "overridden"
+        : row.note
+          ? `deliberate: ${row.note}`
+          : "NOT overridden";
     console.log(
       `  ${row.currency}: Intl=${row.intlDigits}, ISO=${row.iso} (${handled})`,
     );
@@ -90,8 +105,18 @@ console.log(`  kinds mapped by a currency: ${[...mappedKinds].sort().join(", ")}
 console.log(`  currencies with no subunit (exponent 0): ${noSubunit.sort().join(", ")}`);
 
 const wordless = [...mappedKinds].filter((kind) => !words.has(kind)).sort();
-if (wordless.length > 0) {
+const named = new Set(Object.keys(kindNames));
+const resolvedByName = wordless.filter((kind) => named.has(kind));
+const unnamed = wordless.filter((kind) => !named.has(kind));
+if (resolvedByName.length > 0) {
   console.log(
-    `  kinds with no word in any language (always fall back): ${wordless.join(", ")}`,
+    `  kinds with no language word, resolved by the international name: ${resolvedByName.join(", ")}`,
   );
+}
+if (unnamed.length > 0) {
+  console.log(
+    `  kinds with neither a word nor an international name (always fall back): ${unnamed.join(", ")}`,
+  );
+} else {
+  console.log("  every mapped kind resolves for every language");
 }

@@ -72,6 +72,91 @@
     },
     "da": {
       "ore": { "one": "øre", "other": "øre" }
+    },
+    "ko": {
+      "cent": { "other": "센트" },
+      "eurocent": { "other": "센트" },
+      "penny": { "one": "페니", "other": "펜스" },
+      "fen": { "other": "펀" }
+    },
+    "hi": {
+      "cent": { "one": "सेंट", "other": "सेंट" },
+      "eurocent": { "one": "सेंट", "other": "सेंट" },
+      "paisa": { "one": "पैसा", "other": "पैसे" },
+      "poysha": { "one": "पैसा", "other": "पैसे" },
+      "satang": { "one": "सतांग", "other": "सतांग" },
+      "sen": { "one": "सेन", "other": "सेन" },
+      "fen": { "one": "फ़ेन", "other": "फ़ेन" }
+    },
+    "bn": {
+      "cent": { "one": "সেন্ট", "other": "সেন্ট" },
+      "eurocent": { "one": "সেন্ট", "other": "সেন্ট" },
+      "penny": { "one": "পেনি", "other": "পেনি" },
+      "paisa": { "one": "পয়সা", "other": "পয়সা" },
+      "poysha": { "one": "পয়সা", "other": "পয়সা" },
+      "satang": { "one": "সাতাং", "other": "সাতাং" }
+    },
+    "fil": {
+      "sentimo": { "one": "sentimo", "other": "sentimo" }
+    },
+    "vi": {
+      "cent": { "other": "xu" }
+    },
+    "yue": {
+      "cent": { "other": "仙" },
+      "fen": { "other": "分" }
+    },
+    "te": {
+      "cent": { "one": "సెంట్", "other": "సెంట్లు" },
+      "paisa": { "one": "పైసా", "other": "పైసలు" },
+      "fen": { "one": "ఫెన్", "other": "ఫెన్" },
+      "sentimo": { "one": "సెంటిమో", "other": "సెంటిమో" }
+    },
+    "ml": {
+      "cent": { "one": "സെന്റ്", "other": "സെന്റുകൾ" },
+      "paisa": { "one": "പൈസ", "other": "പൈസ" },
+      "sen": { "one": "സെൻ", "other": "സെൻ" }
+    },
+    "kn": {
+      "paisa": { "one": "ಪೈಸೆ", "other": "ಪೈಸೆ" }
+    },
+    "mr": {
+      "cent": { "one": "सेंट", "other": "सेंट" },
+      "eurocent": { "one": "सेंट", "other": "सेंट" },
+      "paisa": { "one": "पैसा", "other": "पैसे" }
+    },
+    "gu": {
+      "paisa": { "one": "પૈસો", "other": "પૈસા" }
+    },
+    "pa": {
+      "cent": { "one": "ਸੈਂਟ", "other": "ਸੈਂਟ" },
+      "eurocent": { "one": "ਸੈਂਟ", "other": "ਸੈਂਟ" },
+      "penny": { "one": "ਪੈਨੀ", "other": "ਪੈਂਸ" },
+      "paisa": { "one": "ਪੈਸਾ", "other": "ਪੈਸੇ" },
+      "poysha": { "one": "ਪੋਇਸ਼ਾ", "other": "ਪੋਇਸ਼ਾ" },
+      "satang": { "one": "ਸਤਾਂਗ", "other": "ਸਤਾਂਗ" },
+      "sen": { "one": "ਸਨ", "other": "ਸਨ" },
+      "fen": { "one": "ਫਨ", "other": "ਫਨ" },
+      "sentimo": { "one": "ਸੰਤੀਮੋ", "other": "ਸੰਤੀਮੋ" }
+    },
+    "ne": {
+      "cent": { "one": "सेन्ट", "other": "सेन्ट" },
+      "eurocent": { "one": "सेन्ट", "other": "सेन्ट" },
+      "paisa": { "one": "पैसा", "other": "पैसा" },
+      "poysha": { "one": "पोयसा", "other": "पोयसा" },
+      "sentimo": { "one": "सेन्टिमो", "other": "सेन्टिमो" }
+    },
+    "ur": {
+      "cent": { "one": "سنٹ", "other": "سنٹ" },
+      "eurocent": { "one": "سینٹ", "other": "سینٹ" },
+      "penny": { "one": "پینی", "other": "پینس" },
+      "paisa": { "one": "پیسہ", "other": "پیسے" },
+      "poysha": { "one": "پیسہ", "other": "پیسے" },
+      "fils": { "one": "فلس", "other": "فلس" }
+    },
+    "km": {
+      "cent": { "other": "សេន" },
+      "sen": { "other": "សេន" }
     }
   }
 }

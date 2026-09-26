@@ -8,10 +8,12 @@ import {
   isLatinScript,
   minusSign,
   selectPlural,
+  selectPluralValue,
 } from "./derive.js";
 import { exponentOverride, localeProfile, lookupSubunit, nameOverride } from "./patch.js";
 import type {
   MoneyInput,
+  PluralCategory,
   PluralForms,
   ResolvedCurrency,
   Result,
@@ -30,7 +32,8 @@ export function resolveCurrency(currency: string, locale?: string): ResolvedCurr
   const loc = canonicalLocale(locale);
   const override = nameOverride(loc, code);
   const expOverride = exponentOverride(code);
-  const subunit = lookupSubunit(code, loc) ?? null;
+  const exponent = expOverride ?? deriveExponent(loc, code);
+  const subunit = lookupSubunit(code, loc, exponent) ?? null;
   const profile = localeProfile(loc);
 
   const sources: Record<string, Source> = {
@@ -43,7 +46,7 @@ export function resolveCurrency(currency: string, locale?: string): ResolvedCurr
     code,
     locale: loc,
     symbol: deriveSymbol(loc, code),
-    exponent: expOverride ?? deriveExponent(loc, code),
+    exponent,
     name: override ? { one: override, other: override } : deriveName(loc, code),
     subunit,
     order: deriveOrder(loc, code),
@@ -59,7 +62,10 @@ function toPlainString(amount: number | string | bigint): string {
     if (!Number.isFinite(amount)) throw new RangeError(`amount must be finite, got ${amount}`);
     const text = String(amount);
     if (!/[eE]/.test(text)) return text;
-    return amount.toFixed(20).replace(/0+$/, "").replace(/\.$/, "");
+    // `toFixed` also returns exponential notation for |x| >= 1e21, so expand
+    // the integer case directly instead of relying on it.
+    if (Number.isInteger(amount)) return BigInt(amount).toString();
+    throw new RangeError(`amount ${text} is too large to represent exactly; pass a string`);
   }
   return amount.trim();
 }
@@ -98,7 +104,11 @@ function scale(amount: number | string | bigint, exponent: number): Scaled {
 }
 
 function pick(forms: PluralForms, locale: string, value: bigint): string {
-  return forms[selectPlural(locale, value)] ?? forms.other;
+  return pickByCategory(forms, selectPlural(locale, value));
+}
+
+function pickByCategory(forms: PluralForms, category: PluralCategory): string {
+  return forms[category] ?? forms.other;
 }
 
 function minorNumber(locale: string, minor: bigint): string {
@@ -137,7 +147,7 @@ function decimalNameString(
   negative: boolean,
   major: bigint,
   minor: bigint,
-  name: string,
+  forms: PluralForms,
   breakBeforeDecimal: boolean,
 ): string {
   // Take the shape (order, spacing, literals) from Intl, then substitute our
@@ -150,6 +160,13 @@ function decimalNameString(
     minimumFractionDigits: resolved.exponent,
     maximumFractionDigits: resolved.exponent,
   }).formatToParts(1);
+
+  // The name's plural depends on the whole decimal value, not the integer part:
+  // French puts 1,5 in `one`.
+  const name = pickByCategory(
+    forms,
+    selectPluralValue(resolved.locale, major, minor, resolved.exponent),
+  );
 
   const majorText =
     (negative ? minusSign(resolved.locale) : "") + formatInteger(resolved.locale, major);
@@ -192,6 +209,16 @@ function decimalNameString(
 export function verbalizeMoney(input: MoneyInput, options: VerbalizeOptions = {}): Result {
   const resolved = resolveCurrency(input.currency, options.locale ?? input.locale);
   const warnings: string[] = [];
+
+  // A code with no CLDR data resolves to the code itself as the name, which is
+  // the one case where the spoken form would contain a bare ISO code.
+  const resolvedName = resolved.name.other.trim();
+  if (resolvedName === "" || resolvedName.toUpperCase() === resolved.code) {
+    warnings.push(
+      `no currency name for ${resolved.code} in ${resolved.locale}; the code will be read as letters`,
+    );
+  }
+
   const { negative, major, minor } = scale(input.amount, resolved.exponent);
 
   const overrideSubunit =
@@ -213,9 +240,20 @@ export function verbalizeMoney(input: MoneyInput, options: VerbalizeOptions = {}
     strategy = "decimal-name";
   }
 
+  // A forced style can still be impossible: the currency may have no minor
+  // unit, or no subunit name may resolve. Fall to the nearest shape that can
+  // actually be spoken.
+  if (strategy === "major-minor" && resolved.exponent === 0) {
+    warnings.push(`${resolved.code} has no minor unit; using major-only`);
+    strategy = "major-only";
+  }
   if (strategy === "major-minor" && subunitForms === null) {
-    warnings.push(`no subunit name for ${resolved.code} in ${resolved.locale}; using decimal-name`);
-    strategy = "decimal-name";
+    if (options.subunit === false) {
+      strategy = "major-only";
+    } else {
+      warnings.push(`no subunit name for ${resolved.code} in ${resolved.locale}; using decimal-name`);
+      strategy = "decimal-name";
+    }
   }
   if (strategy === "decimal-name" && resolved.exponent === 0) {
     warnings.push(`${resolved.code} has no minor unit; using major-only`);
@@ -238,7 +276,9 @@ export function verbalizeMoney(input: MoneyInput, options: VerbalizeOptions = {}
 
   let spoken: string;
   if (strategy === "major-only") {
-    spoken = `${sign}${formatInteger(resolved.locale, major)} ${majorName}`;
+    // -0.004 rounds to zero, and "-0 US dollars" is wrong.
+    const majorSign = major === 0n ? "" : sign;
+    spoken = `${majorSign}${formatInteger(resolved.locale, major)} ${majorName}`;
   } else if (strategy === "major-minor") {
     const forms = subunitForms as PluralForms;
     const minorName = pick(forms, resolved.locale, minor);
@@ -250,7 +290,7 @@ export function verbalizeMoney(input: MoneyInput, options: VerbalizeOptions = {}
       spoken = `${sign}${formatInteger(resolved.locale, major)} ${majorName}${join} ${minorText}`;
     }
   } else {
-    spoken = decimalNameString(resolved, negative, major, minor, effectiveName.other, breakBeforeDecimal);
+    spoken = decimalNameString(resolved, negative, major, minor, effectiveName, breakBeforeDecimal);
   }
 
   return { spoken, display: displayString(resolved, input.amount, minor), strategy, warnings };

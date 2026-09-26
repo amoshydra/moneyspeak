@@ -1,22 +1,57 @@
 {
   "_meta": {
     "status": "draft",
-    "note": "Currency -> subunit kind. The kind is the concept; the word per language lives in data/subunits.json. null means the currency has no subunit (ISO 4217 exponent 0). A currency absent from this file has an unknown kind and falls back to the decimal reading."
+    "note": "Currency -> subunit kind, plus the international name for each kind. The kind is the concept; the word per language lives in data/subunits.json. null means the currency has no subunit (ISO 4217 exponent 0). A currency absent from `kinds` is guessed only when its exponent is 0, which means no subunit; exponents 2 and 3 are not guessed, because they are not a cent or a fils in general (CZK is haler, PLN is grosz). `names` is the fourth resolution tier, used when a language has no word for the kind, so no currency with a known kind reaches the decimal reading."
   },
-  "kinds": {
-    "USD": "cent", "AUD": "cent", "CAD": "cent", "NZD": "cent", "TWD": "cent",
-    "HKD": "cent", "SGD": "cent", "ZAR": "cent",
+  "names": {
+    "cent": { "one": "cent", "other": "cents" },
+    "eurocent": { "one": "cent", "other": "cents" },
+    "penny": { "one": "penny", "other": "pence" },
+    "fen": { "one": "fen", "other": "fen" },
+    "paisa": { "one": "paisa", "other": "paise" },
+    "poysha": { "one": "poysha", "other": "poysha" },
+    "satang": { "one": "satang", "other": "satang" },
+    "sen": { "one": "sen", "other": "sen" },
+    "sentimo": { "one": "sentimo", "other": "sentimo" },
+    "ore": { "one": "øre", "other": "øre" },
+    "franccent": { "one": "centime", "other": "centimes" },
+    "fils": { "one": "fils", "other": "fils" }
+  },  "kinds": {
+    "USD": "cent",
+    "AUD": "cent",
+    "CAD": "cent",
+    "NZD": "cent",
+    "TWD": "cent",
+    "HKD": "cent",
+    "SGD": "cent",
+    "ZAR": "cent",
+    "LKR": "cent",
     "EUR": "eurocent",
     "GBP": "penny",
     "CNY": "fen",
-    "INR": "paisa", "PKR": "paisa", "NPR": "paisa",
+    "INR": "paisa",
+    "PKR": "paisa",
+    "NPR": "paisa",
     "BDT": "poysha",
     "THB": "satang",
-    "MYR": "sen", "IDR": "sen",
+    "MYR": "sen",
+    "IDR": "sen",
+    "KHR": "sen",
     "PHP": "sentimo",
-    "SEK": "ore", "NOK": "ore", "DKK": "ore",
+    "SEK": "ore",
+    "NOK": "ore",
+    "DKK": "ore",
     "CHF": "franccent",
-    "KWD": "fils", "BHD": "fils", "OMR": "fils", "JOD": "fils", "IQD": "fils",
-    "JPY": null, "KRW": null, "VND": null, "ISK": null
+    "KWD": "fils",
+    "BHD": "fils",
+    "OMR": "fils",
+    "JOD": "fils",
+    "IQD": "fils",
+    "JPY": null,
+    "KRW": null,
+    "VND": null,
+    "ISK": null,
+    "LAK": null,
+    "MMK": null
   }
 }

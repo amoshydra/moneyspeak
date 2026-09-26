@@ -187,3 +187,208 @@ where the dictionary records both forms. CLDR's `ja` plural rule has only the
 - https://ja.wikipedia.org/wiki/セント_(通貨)
 - https://ja.wikipedia.org/wiki/人民元
 - https://elon.io/grammar/thai/numbers/currency
+
+## Native subunit words for the fallback languages (2026-09-26)
+
+`ko hi bn vi fil yue te ml kn mr gu pa ne ur km lo my` had no
+words and read the international name (`... 45 cents`, `... 45 poysha`). This
+pass adds a word wherever the language's own Wikipedia gives one for the
+currency that uses the kind. Method: read the target-language article for the
+currency (via the `langlinks` of the English article) and take the infobox
+`subunit_name_N` / `plural_subunit_N`, or the prose where it shows the number
+form. Every word below is attested on the cited page; nothing is machine
+translated and no bare search result is used. Where a source gives only one
+number form, that form fills both `one` and `other` (the same convention the
+existing `ta` entry uses); where the source gives a distinct plural, it is used
+and noted.
+
+### Korean (ko) — CLDR: other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | one `센트` | added | https://ko.wikipedia.org/wiki/미국_달러 | "1달러는 100센트(기호:¢)이다"; no number distinction, so one form. |
+| eurocent | one `센트` | added | https://ko.wikipedia.org/wiki/유로 | "유로는 100센트로 나뉜다". |
+| penny | one `페니`, other `펜스` | added | https://ko.wikipedia.org/wiki/파운드_스털링 | Infobox `subunit_name_1 = 페니`, `plural_subunit_1 = 펜스`; the source distinguishes, recorded though ko selects only `other`. |
+| fen | one `펀` | added | https://ko.wikipedia.org/wiki/런민비 | Infobox `보조단위_이름_2 = 펀 (分)`. |
+
+### Hindi (hi) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | `सेंट` | added | https://hi.wikipedia.org/wiki/अमेरिकी_डॉलर | "एक डॉलर में सौ सेंट होते हैं". |
+| eurocent | `सेंट` | added | https://hi.wikipedia.org/wiki/यूरो | Infobox `subunit_name_1 = यूरो सेंट`; the unit word is `सेंट`, `यूरो` is the disambiguator. |
+| paisa | one `पैसा`, other `पैसे` | added | https://hi.wikipedia.org/wiki/भारतीय_रुपया | "१०० पैसा में विभाजित"; the plural `६४ पैसे` appears in the history section. |
+| poysha | one `पैसा`, other `पैसे` | added | https://hi.wikipedia.org/wiki/बांग्लादेशी_टका | "৳1 को 100 पोइशा (पैसा) में विभाजित"; infobox `subunit_name_1 = पैसा`. |
+| satang | `सतांग` | added | https://hi.wikipedia.org/wiki/थाई_बाथ | Infobox `subunit_name_1 = सतांग`. |
+| sen | `सेन` | added | https://hi.wikipedia.org/wiki/मलेशियाई_रिंग्गित | Infobox `subunit_name_1 = सेन`. |
+| fen | `फ़ेन` | added | https://hi.wikipedia.org/wiki/रॅन्मिन्बी | Infobox `subunit_name_3 = फ़ेन (分)`. |
+
+### Bengali (bn) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | `সেন্ট` | added | https://bn.wikipedia.org/wiki/মার্কিন_ডলার | Infobox `subunit_name_2 = সেন্ট (Cent)`. |
+| eurocent | `সেন্ট` | added | https://bn.wikipedia.org/wiki/ইউরো | Infobox `subunit_name_1 = সেন্ট (c)`. |
+| penny | `পেনি` | added | https://bn.wikipedia.org/wiki/পাউন্ড_স্টার্লিং | Infobox `subunit_name_1 = পেনি (penny)`. |
+| paisa | `পয়সা` | added | https://bn.wikipedia.org/wiki/ভারতীয়_রুপি | "১, ১০০ পয়সায় বিভক্ত"; infobox `subunit_name_1 = পয়সা`. |
+| poysha | `পয়সা` | added | https://bn.wikipedia.org/wiki/বাংলাদেশী_টাকা | "টাকার ভগ্নাংশ হল পয়সা"; infobox `subunit_name_1 = পয়সা`. Bengali does not inflect after a numeral, so one form. |
+| satang | `সাতাং` | added | https://bn.wikipedia.org/wiki/থাই_বাত | Infobox `subunit_name_1 = সাতাং`. |
+
+### Filipino (fil) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| sentimo | `sentimo` | added | https://tl.wikipedia.org/wiki/Piso_ng_Pilipinas | Infobox `subunit_name_1 = Sentimo o centavo`; "baryang isang-sentimo", "limang-sentimo". Filipino does not inflect the noun after a numeral. |
+
+### Vietnamese (vi) — CLDR: other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | one `xu` | added | https://vi.wikipedia.org/wiki/Đô_la_Mỹ | Infobox `subunit_name_2 = một xu` (1/100 đô la). No number distinction. |
+
+### Cantonese (yue) — CLDR: other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | one `仙` | added | https://zh-yue.wikipedia.org/wiki/港元 | "十分一毫就係「仙」"; 1/100 of a dollar. |
+| fen | one `分` | added | https://zh-yue.wikipedia.org/wiki/人民幣 | "硬幣面額有5毫、2毫、1毫、5分、2分、1分". |
+
+### Telugu (te) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | one `సెంట్`, other `సెంట్లు` | added | https://te.wikipedia.org/wiki/అమెరికన్_డాలర్ | Infobox `subunit_name_2 = సెంట్`; prose "1 సెంట్లు", "25 సెంట్లు". |
+| paisa | one `పైసా`, other `పైసలు` | added | https://te.wikipedia.org/wiki/భారతీయ_రూపాయి | Infobox `subunit_name_1 = పైసా`; "25 పైసలు, 50 పైసలు". |
+| fen | `ఫెన్` | added | https://te.wikipedia.org/wiki/రెన్మిన్బి | Infobox `subunit_name_2 = ఫెన్ (分)`; only the base form is attested. |
+| sentimo | `సెంటిమో` | added | https://te.wikipedia.org/wiki/ఫిలిప్పీన్_పెసో | Infobox `subunit_name_1 = సెంటిమో`; only the base form is attested. |
+
+### Malayalam (ml) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | one `സെന്റ്`, other `സെന്റുകൾ` | added | https://ml.wikipedia.org/wiki/യുണൈറ്റഡ്_സ്റ്റേറ്റ്സ്_ഡോളർ | "100 സെന്റുകളായി വിഭജിച്ചിരിക്കുന്നു". |
+| paisa | `പൈസ` | added | https://ml.wikipedia.org/wiki/പൈസ | "100 പൈസ = ഒരു രൂപ"; invariant after a numeral. |
+| sen | `സെൻ` | added | https://ml.wikipedia.org/wiki/റിങ്കിറ്റ് | Infobox `subunit_name_1 = സെൻ`. |
+
+### Kannada (kn) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| paisa | `ಪೈಸೆ` | added | https://kn.wikipedia.org/wiki/ಭಾರತದ_ರೂಪಾಯಿ | Infobox `subunit_name_1 = ಪೈಸೆ`; invariant after a numeral. |
+
+### Marathi (mr) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | `सेंट` | added | https://mr.wikipedia.org/wiki/अमेरिकन_डॉलर | Infobox `विभाजन = १०० सेंट`. |
+| eurocent | `सेंट` | added | https://mr.wikipedia.org/wiki/युरो | Infobox `विभाजन = १०० सेंट`. |
+| paisa | one `पैसा`, other `पैसे` | added | https://mr.wikipedia.org/wiki/भारतीय_रुपया | "शंभर पैशांमध्ये (एकवचन: पैसा, अनेकवचन: पैसे)". |
+
+### Gujarati (gu) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| paisa | one `પૈસો`, other `પૈસા` | added | https://gu.wikipedia.org/wiki/ભારતીય_રૂપિયો, https://gujarativishwakosh.org/પૈસો/ | Wikipedia: "૧૦૦ પૈસામાં વિભાજીત"; Gujarati Vishwakosh: "3 પાઈ = 1 પૈસો, 4 પૈસા = 1 આનો" (singular `પૈસો`). |
+
+### Punjabi (pa) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | `ਸੈਂਟ` | added | https://pa.wikipedia.org/wiki/ਸੰਯੁਕਤ_ਰਾਜ_ਡਾਲਰ | Infobox `subunit_name_2 = ਸੈਂਟ`. |
+| eurocent | `ਸੈਂਟ` | added | https://pa.wikipedia.org/wiki/ਯੂਰੋ | Infobox `subunit_name_1 = ਸੈਂਟ`. |
+| penny | one `ਪੈਨੀ`, other `ਪੈਂਸ` | added | https://pa.wikipedia.org/wiki/ਪਾਊਂਡ_ਸਟਰਲਿੰਗ | Infobox `subunit_name_1 = ਪੈਨੀ`, `plural_subunit_1 = ਪੈਂਸ`. |
+| paisa | one `ਪੈਸਾ`, other `ਪੈਸੇ` | added | https://pa.wikipedia.org/wiki/ਭਾਰਤੀ_ਰੁਪਈਆ | Infobox `subunit_name_1 = ਪੈਸਾ`, coins "50 ਪੈਸੇ". |
+| poysha | `ਪੋਇਸ਼ਾ` | added | https://pa.wikipedia.org/wiki/ਬੰਗਲਾਦੇਸ਼ੀ_ਟਕਾ | Infobox `subunit_name_1 = ਪੋਇਸ਼ਾ`. |
+| satang | `ਸਤਾਂਗ` | added | https://pa.wikipedia.org/wiki/ਥਾਈ_ਬਾਤ | Infobox `subunit_name_1 = ਸਤਾਂਗ`. |
+| sen | `ਸਨ` | added | https://pa.wikipedia.org/wiki/ਮਲੇਸ਼ੀਆਈ_ਰਿਙਿਤ | Infobox `subunit_name_1 = ਸਨ`. |
+| fen | `ਫਨ` | added | https://pa.wikipedia.org/wiki/ਰੇਨਮਿਨਬੀ | Infobox `subunit_name_3 = ਫਨ (分)`. |
+| sentimo | `ਸੰਤੀਮੋ` | added | https://pa.wikipedia.org/wiki/ਫ਼ਿਲਪੀਨੀ_ਪੀਸੋ | Infobox `subunit_name_1 = ਸੰਤੀਮੋ`. |
+
+### Nepali (ne) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | `सेन्ट` | added | https://ne.wikipedia.org/wiki/अमेरिकी_डलर | "एक डलरमा सय सेन्ट हुन्छ". |
+| eurocent | `सेन्ट` | added | https://ne.wikipedia.org/wiki/युरो | Infobox `subunit_name_1 = सेन्ट`. |
+| paisa | `पैसा` | added | https://ne.wikipedia.org/wiki/नेपाली_रुपैयाँ, https://ne.wikipedia.org/wiki/भारतीय_रुपैयाँ | "एक रुपैयाँलाई सय पैसा"; invariant after a numeral. |
+| poysha | `पोयसा` | added | https://ne.wikipedia.org/wiki/टाका | Infobox `subunit_name_1 = पोयसा`. |
+| sentimo | `सेन्टिमो` | added | https://ne.wikipedia.org/wiki/फिलिपिनी_पेसो | Infobox `subunit_name_1 = सेन्टिमो`. |
+
+### Urdu (ur) — CLDR: one, other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | `سنٹ` | added | https://ur.wikipedia.org/wiki/امریکی_ڈالر | Infobox `subunit_name_2 = سنٹ` (the article's spelling). |
+| eurocent | `سینٹ` | added | https://ur.wikipedia.org/wiki/یورو | "50 سینٹ"; the euro article spells it with the medial ye. |
+| penny | one `پینی`, other `پینس` | added | https://ur.wikipedia.org/wiki/پاؤنڈ_اسٹرلنگ | Infobox `subunit_name_1 = پینی`, `plural_subunit_1 = پینس`. |
+| paisa | one `پیسہ`, other `پیسے` | added | https://ur.wikipedia.org/wiki/پاکستانی_روپیہ | Infobox `subunit_name_1 = پیسہ`; nickname `پیسے`. |
+| poysha | one `پیسہ`, other `پیسے` | added | https://ur.wikipedia.org/wiki/بنگلہ_دیشی_ٹکا | Infobox `subunit_name_1 = پیسہ`. |
+| fils | `فلس` | added | https://ur.wikipedia.org/wiki/کویتی_دینار | Infobox `subunit_name_1 = فلس (کرنسی)`; same on https://ur.wikipedia.org/wiki/بحرینی_دینار. |
+
+### Khmer (km) — CLDR: other
+
+| kind | word | verdict | source URL | note |
+| --- | --- | --- | --- | --- |
+| cent | one `សេន` | added | https://km.wikipedia.org/wiki/ដុល្លារអាមេរិក | Infobox `subunit_name_2 = សេន` for the US dollar cent. |
+| sen | one `សេន` | added | https://km.wikipedia.org/wiki/រៀល_(រូបិយវត្ថុ) | Infobox `subunit_name_2 = សេន (ទាំងពីរ, ការប្រើដ៏កម្រ)` for the riel; the riel is "divided into 100 sen" (https://en.wikipedia.org/wiki/Cambodian_riel). |
+
+### Left out deliberately
+
+- **ko** `paisa`, `poysha`, `satang`, `sen`, `sentimo`, `fils`, `ore`,
+  `franccent`: no Korean-language article found that names the subunit; the
+  English international name stays.
+- **hi** `sentimo`, `penny`, `fils`, `ore`, `franccent`: the Hindi pages use the
+  Latin/English form (`Sentimo`, `penny`), not a Devanagari word, so no word.
+- **bn** `fen`, `sen`, `sentimo`, `poysha` (already covered by `পয়সা`), `fils`,
+  `ore`, `franccent`: the Bengali Renminbi page uses `fēn (分)` in Latin; no
+  Bengali-language article exists for the ringgit / Philippine peso.
+- **fil** `cent`, `eurocent`, `penny`, `paisa`, `satang`, `sen`, `fen`,
+  `poysha`, `fils`: `sentimo` is the only Filipino word sourced (`Piso ng
+  Pilipinas` defines it for the peso). The US-dollar article does not name the
+  cent in Filipino, so `fil.cent` is left out rather than inferred.
+- **vi** `eurocent`, `sentimo`, `penny`, `paisa`, `satang`, `sen`, `fen`,
+  `fils`: the Vietnamese Euro page uses English `Cent`, and the Philippine-peso
+  page labels `sentimo` as the Filipino term (`Tiếng Philippines`), not a
+  Vietnamese word.
+- **yue** `eurocent`, `penny`, `sentimo`, `paisa`, `satang`, `sen`, `poysha`,
+  `fils`: no Cantonese-language page names these subunits.
+- **te** `eurocent`, `penny`, `satang`, `sen`, `poysha`, `fils`: no Telugu page
+  names them.
+- **ml** `eurocent`, `fen`, `sentimo`, `penny`, `satang`, `poysha`, `fils`: no
+  Malayalam page names them.
+- **kn** `cent`, `eurocent`, `fen`, `sentimo`, `penny`, `satang`, `sen`,
+  `poysha`, `fils`: the Kannada US-dollar page uses the English word `Cent`, and
+  no Kannada page names the others.
+- **mr** `penny`, `satang`, `sen`, `fen`, `sentimo`, `poysha`, `fils`: no
+  Marathi page names them.
+- **gu** `cent`, `eurocent`, `penny`, `satang`, `sen`, `fen`, `sentimo`,
+  `poysha`, `fils`: Gujarati has no article for the dollar, euro or pound;
+  only `paisa` is sourced.
+- **pa** `fils`, `ore`, `franccent`: no Punjabi page names them.
+- **ne** `penny`, `satang`, `sen`, `fen`, `fils`, `ore`, `franccent`: the
+  Nepali Renminbi page uses `fēn (分)` in Latin; the others have no Nepali page.
+- **ur** `satang`, `sen`, `fen`, `sentimo`, `ore`, `franccent`: the Urdu
+  ringgit / Thai-baht / Renminbi / Philippine-peso infoboxes use the Latin
+  `sen`, `satang`, `fēn`, `Sentimo`.
+- **km** `paisa`, `poysha`, `satang`, `penny`, `sentimo`, `eurocent`, `fen`,
+  `fils`, `ore`, `franccent`: only `cent`/`sen` are named in Khmer.
+- **lo**, **my**: nothing added. The Lao kip and Myanmar kyat have no minor
+  unit in ISO 4217 (exponent 0), and their Wikipedia pages give no word for any
+  of the mapped kinds.
+
+### Fallbacks after this pass
+
+- Every *mapped* kind now has at least one language word: `fils` (`ur.fils`)
+  and `poysha` (`bn`, `hi`, `pa`, `ne`, `ur`) no longer rely on the
+  international name for a language that actually needs them.
+- Among the target languages, `ore` and `franccent` still have no word, so
+  `ko ... SEK 1.05` etc. read the international name (`øre`, `centime`). Every
+  other target language falls back only for the cells listed under *Left out*,
+  which keeps the international name from `data/subunit-kinds.json` (never the
+  decimal reading, because the kind still resolves).
+
+### Note (data-only constraint)
+
+`test/verbalize.test.ts:109` still carries the comment "ko has no cent entry";
+the assertion still holds (a `ko` subunit exists, the strategy is
+`major-minor`), so no test change was required. The comment is now stale.

@@ -8,8 +8,9 @@ interface SubunitFile {
   subunits: Record<string, Record<string, PluralForms>>;
 }
 
-/** Currency -> subunit kind. `null` means the currency has no subunit. */
+/** Currency -> subunit kind, plus the international name per kind. */
 interface SubunitKindsFile {
+  names: Record<string, PluralForms>;
   kinds: Record<string, string | null>;
 }
 
@@ -28,20 +29,36 @@ const overrides = overridesJson as unknown as OverridesFile;
 const language = (locale: string): string => locale.split("-")[0] ?? locale;
 
 /**
+ * Default kind for a currency with no explicit entry. Only the safe case is
+ * guessed: exponent 0 means no subunit. An exponent of 2 or 3 is not a cent or
+ * a fils in general (CZK is haléř, PLN is grosz), so those stay unknown and the
+ * caller falls back rather than naming the wrong unit.
+ */
+function defaultKind(exponent: number): string | null | undefined {
+  if (exponent === 0) return null;
+  return undefined;
+}
+
+/**
  * Resolve the minor unit name for `currency` in `locale`.
  *
- * Three tiers, most specific first:
+ * Four tiers, most specific first:
  *   1. an explicit override for the locale, then for the language; `null` there
  *      means the currency has no subunit in that language.
- *   2. the currency's subunit kind, from `data/subunit-kinds.json`. An absent
- *      currency is unknown, a `null` kind means the currency has no subunit.
+ *   2. the currency's subunit kind, from `data/subunit-kinds.json`, or a default
+ *      from the exponent when the currency has no entry.
  *   3. the language's word for that kind, from `data/subunits.json`.
+ *   4. the kind's international name, so a currency with a known kind never
+ *      reaches the decimal reading only because a language lacks a word.
  *
- * Returns `null` for a currency that has no subunit, and `undefined` when the
- * currency kind is unknown or the language has no word for it, so the caller
- * falls back to the decimal reading.
+ * Returns `null` for a currency that has no subunit, and `undefined` only when
+ * the kind is unknown and no international name exists.
  */
-export function lookupSubunit(currency: string, locale: string): PluralForms | null | undefined {
+export function lookupSubunit(
+  currency: string,
+  locale: string,
+  exponent: number,
+): PluralForms | null | undefined {
   const lang = language(locale);
 
   const localeOverride = overrides.subunits?.[locale]?.[currency];
@@ -49,11 +66,15 @@ export function lookupSubunit(currency: string, locale: string): PluralForms | n
   const languageOverride = overrides.subunits?.[lang]?.[currency];
   if (languageOverride !== undefined) return languageOverride;
 
-  const kind = kinds.kinds[currency];
+  const entry = kinds.kinds[currency];
+  const kind = entry !== undefined ? entry : defaultKind(exponent);
   if (kind === undefined) return undefined;
   if (kind === null) return null;
 
-  return subunits.subunits[lang]?.[kind];
+  const word = subunits.subunits[lang]?.[kind];
+  if (word !== undefined) return word;
+
+  return kinds.names[kind];
 }
 
 export function exponentOverride(currency: string): number | undefined {

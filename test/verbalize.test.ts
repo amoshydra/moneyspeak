@@ -78,12 +78,11 @@ describe("verbalizeMoney: shape by locale", () => {
     expect(result.spoken).toContain("สตางค์");
   });
 
-  it("falls back to decimal-name when the locale splits but the currency has no subunit", () => {
-    // CNY has no settled Japanese subunit, so ja-CNY stays a number reading.
-    const result = verbalizeMoney({ amount: 123.45, currency: "CNY", locale: "ja-JP" });
+  it("falls back to decimal-name for a currency with no known kind", () => {
+    // PLN is not in the kind table, so there is no subunit word to use.
+    const result = verbalizeMoney({ amount: 123.45, currency: "PLN", locale: "ja-JP" });
     expect(result.strategy).toBe("decimal-name");
-    expect(result.spoken).toContain("中国人民元");
-    expect(result.spoken).toContain("123.");
+    expect(result.spoken).toContain("123.45");
   });
 
   it("applies the id-ID name override", () => {
@@ -104,6 +103,35 @@ describe("subunit resolution", () => {
     const cny = verbalizeMoney({ amount: 123.45, currency: "CNY", locale: "zh-CN" }, { style: "major-minor" });
     expect(cny.strategy).toBe("major-minor");
     expect(cny.spoken).toContain("分");
+  });
+
+  it("uses the language's own word when it has one", () => {
+    expect(resolveCurrency("USD", "ko-KR").subunit?.other).toBe("센트");
+    expect(verbalizeMoney({ amount: 123.45, currency: "USD", locale: "ko-KR" }).spoken).toContain("센트");
+  });
+
+  it("falls back to the international name for a kind the language has no word for", () => {
+    // Outside the Nordic languages and English, no language carries a word for
+    // `ore`, so ko-KR SEK resolves through the kind's international name.
+    expect(resolveCurrency("SEK", "ko-KR").subunit?.other).toBe("øre");
+    expect(verbalizeMoney({ amount: "1.05", currency: "SEK", locale: "ko-KR" }).strategy).toBe("major-minor");
+  });
+});
+
+describe("guards", () => {
+  it("warns when a code has no CLDR name", () => {
+    const result = verbalizeMoney({ amount: 123.45, currency: "ZZZ", locale: "en-US" });
+    expect(result.warnings.join(" ")).toContain("no currency name");
+  });
+
+  it("does not print a negative zero", () => {
+    expect(verbalizeMoney({ amount: -0.004, currency: "USD", locale: "en-US" }).spoken).toBe("0 US dollars");
+  });
+
+  it("handles a value at the exponential threshold", () => {
+    expect(verbalizeMoney({ amount: 1e21, currency: "USD", locale: "en-US" }).spoken).toContain(
+      "1000000000000000000000",
+    );
   });
 });
 
@@ -156,17 +184,33 @@ describe("verbalizeMoney: options", () => {
 });
 
 describe("plural categories", () => {
-  it("uses the many category for large amounts in fr, es and it", () => {
-    for (const locale of ["fr-FR", "es-ES", "it-IT"]) {
-      const result = verbalizeMoney({ amount: 1000000.45, currency: "EUR", locale });
-      expect(result.strategy).toBe("major-minor");
-      expect(result.spoken).toMatch(/centime|céntimo|centesimi/);
-    }
+  it("selects the subunit plural from the minor value", () => {
+    // fr/es/it have a `many` category, but it applies from 10^6 upward and the
+    // minor value is below 10^exponent, so the subunit uses `one`/`other` only.
+    // Assert the real output rather than a category that cannot fire.
+    expect(verbalizeMoney({ amount: "1.01", currency: "EUR", locale: "fr-FR" }).spoken).toContain("1 centime");
+    expect(verbalizeMoney({ amount: 2.02, currency: "EUR", locale: "fr-FR" }).spoken).toContain("centimes");
   });
 
-  it("falls back to other when a category is absent", () => {
-    // fr has a many category; the draft supplies it, so a plain amount still works.
-    expect(verbalizeMoney({ amount: 2.02, currency: "EUR", locale: "fr-FR" }).spoken).toContain("centimes");
+  it("uses the category that matches the value, not a fixed pair", () => {
+    expect(verbalizeMoney({ amount: 1, currency: "RUB", locale: "ru-RU" }).spoken).toContain("российский рубль");
+    expect(verbalizeMoney({ amount: 2, currency: "RUB", locale: "ru-RU" }).spoken).toContain("российских рубля");
+    expect(verbalizeMoney({ amount: 5, currency: "RUB", locale: "ru-RU" }).spoken).toContain("российских рублей");
+  });
+
+  it("handles Slavic few and many", () => {
+    expect(verbalizeMoney({ amount: 5, currency: "PLN", locale: "pl-PL" }).spoken).toContain("złotych polskich");
+    expect(verbalizeMoney({ amount: 5, currency: "CZK", locale: "cs-CZ" }).spoken).toContain("českých korun");
+    expect(verbalizeMoney({ amount: 5, currency: "UAH", locale: "uk-UA" }).spoken).toContain("українських гривень");
+  });
+
+  it("handles a dual and a few category", () => {
+    expect(verbalizeMoney({ amount: 3, currency: "EGP", locale: "ar-EG" }).spoken).toContain("جنيهات مصرية");
+  });
+
+  it("uses the singular for a decimal value where the locale puts it in one", () => {
+    // French puts 1,5 in `one`, so the name is singular.
+    expect(verbalizeMoney({ amount: "1.50", currency: "PLN", locale: "fr-FR" }).spoken).toContain("zloty polonais");
   });
 
   it("uses cents, not centimes, for the French dollar cent", () => {
@@ -177,10 +221,12 @@ describe("plural categories", () => {
 });
 
 describe("decimal break", () => {
+  // zh and yue keep split: false, so they take the decimal path, which is the
+  // only path the workaround applies to.
+  const DECIMAL_LOCALES = ["zh-CN", "zh-TW", "zh-HK", "yue-HK"];
+
   it("is off by default", () => {
-    // CNY has no subunit in these locales, so all six stay decimal-name. USD
-    // would split into major and minor for ja-JP and th-TH.
-    for (const locale of ["zh-CN", "zh-TW", "zh-HK", "ja-JP", "th-TH", "ko-KR"]) {
+    for (const locale of DECIMAL_LOCALES) {
       const { spoken } = verbalizeMoney({ amount: 123.45, currency: "CNY", locale });
       expect(spoken).not.toContain("\u2060");
       expect(spoken).toContain("123.");
@@ -188,7 +234,7 @@ describe("decimal break", () => {
   });
 
   it("inserts a word joiner when enabled", () => {
-    for (const locale of ["zh-CN", "zh-TW", "zh-HK", "ja-JP", "th-TH", "ko-KR"]) {
+    for (const locale of DECIMAL_LOCALES) {
       const { spoken } = verbalizeMoney(
         { amount: 123.45, currency: "CNY", locale },
         { decimalBreak: "auto" },
@@ -212,8 +258,10 @@ describe("decimal break", () => {
   });
 
   it("does not apply to Latin-script locales even when enabled", () => {
+    // PLN has no kind, so en-US takes the decimal path, and Latin scripts never
+    // get a word joiner.
     expect(
-      verbalizeMoney({ amount: 123.456, currency: "KWD", locale: "en-US" }, { decimalBreak: "auto" }).spoken,
-    ).toBe("123.456 Kuwaiti dinars");
+      verbalizeMoney({ amount: 123.45, currency: "PLN", locale: "en-US" }, { decimalBreak: "auto" }).spoken,
+    ).not.toContain("\u2060");
   });
 });

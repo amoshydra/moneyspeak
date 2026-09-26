@@ -26,12 +26,42 @@ function currencyPart(locale: string, currency: string, value: number, fractionD
   return fmt.formatToParts(value).find((part) => part.type === "currency")?.value ?? "";
 }
 
-/** Singular and plural currency names, derived from `Intl`. */
+// Sample values used to obtain each CLDR plural form of a currency name. The
+// category of a value is not fixed by language: Russian puts 5 in `many` and
+// fractions in `other`, Arabic puts 2 in `two`, French puts fractions in
+// `other`. The form is therefore taken from a value that actually selects the
+// category, not from a fixed pair of values.
+const PLURAL_SAMPLES: Array<{ value: number; fractionDigits: number }> = [
+  { value: 0, fractionDigits: 0 },
+  { value: 1, fractionDigits: 0 },
+  { value: 2, fractionDigits: 0 },
+  { value: 3, fractionDigits: 0 },
+  { value: 4, fractionDigits: 0 },
+  { value: 5, fractionDigits: 0 },
+  { value: 6, fractionDigits: 0 },
+  { value: 10, fractionDigits: 0 },
+  { value: 11, fractionDigits: 0 },
+  { value: 20, fractionDigits: 0 },
+  { value: 21, fractionDigits: 0 },
+  { value: 100, fractionDigits: 0 },
+  { value: 1000, fractionDigits: 0 },
+  { value: 1000000, fractionDigits: 0 },
+  { value: 1.5, fractionDigits: 1 },
+];
+
+/** Every CLDR plural form of a currency name, each sampled from `Intl`. */
 export function deriveName(locale: string, currency: string): PluralForms {
-  return {
-    one: currencyPart(locale, currency, 1, 0),
-    other: currencyPart(locale, currency, 2, 0),
-  };
+  const rules = new Intl.PluralRules(locale);
+  const categories = rules.resolvedOptions().pluralCategories as PluralCategory[];
+  const forms: Partial<Record<PluralCategory, string>> = {};
+
+  for (const category of categories) {
+    const sample = PLURAL_SAMPLES.find((candidate) => rules.select(candidate.value) === category);
+    if (sample) forms[category] = currencyPart(locale, currency, sample.value, sample.fractionDigits);
+  }
+  if (forms.other === undefined) forms.other = currencyPart(locale, currency, 2, 0);
+
+  return forms as PluralForms;
 }
 
 export function deriveSymbol(locale: string, currency: string): string {
@@ -81,6 +111,24 @@ export function minusSign(locale: string): string {
 
 export function selectPlural(locale: string, value: bigint): PluralCategory {
   return new Intl.PluralRules(locale).select(Number(value)) as PluralCategory;
+}
+
+/**
+ * Plural category of a full decimal value, for the currency name in the
+ * decimal-name reading. The category depends on the fraction, so it cannot be
+ * taken from the integer part alone: French puts `1,5` in `one`.
+ */
+export function selectPluralValue(
+  locale: string,
+  major: bigint,
+  minor: bigint,
+  exponent: number,
+): PluralCategory {
+  const value =
+    exponent > 0
+      ? Number(`${major}.${minor.toString().padStart(exponent, "0")}`)
+      : Number(major);
+  return new Intl.PluralRules(locale).select(value) as PluralCategory;
 }
 
 /** True when the locale's script is Latin, where a plain "." already reads correctly. */
