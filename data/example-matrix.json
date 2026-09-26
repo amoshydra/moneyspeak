@@ -14,6 +14,7 @@
   "currencies": [
     "USD", "SGD", "EUR", "GBP", "JPY", "CNY", "TWD", "HKD",
     "KRW", "MYR", "IDR", "THB", "VND", "PHP", "INR", "BDT",
-    "NPR", "PKR", "LKR", "KHR", "LAK", "MMK", "KWD", "TRY"
+    "NPR", "PKR", "LKR", "KHR", "LAK", "MMK", "KWD", "TRY",
+    "AUD", "CAD", "CHF", "NZD", "SEK", "NOK", "ZAR"
   ]
 }

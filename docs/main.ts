@@ -18,12 +18,22 @@ const EXAMPLES: Array<{ locale: string; currency: string; amount: string }> = [
   { locale: "en-SG", currency: "SGD", amount: "123.45" },
   { locale: "en-MY", currency: "MYR", amount: "123.45" },
   { locale: "en-PH", currency: "PHP", amount: "123.45" },
+  { locale: "en-US", currency: "AUD", amount: "123.45" },
+  { locale: "en-US", currency: "CAD", amount: "123.45" },
+  { locale: "en-GB", currency: "NZD", amount: "123.45" },
+  { locale: "en-GB", currency: "ZAR", amount: "123.45" },
+  { locale: "en-US", currency: "LKR", amount: "123.45" },
+  // Turkey
+  { locale: "tr-TR", currency: "TRY", amount: "123.45" },
   // Europe
   { locale: "de-DE", currency: "EUR", amount: "123.45" },
   { locale: "fr-FR", currency: "EUR", amount: "123.45" },
   { locale: "es-ES", currency: "EUR", amount: "123.45" },
   { locale: "it-IT", currency: "EUR", amount: "123.45" },
   { locale: "nl-NL", currency: "EUR", amount: "123.45" },
+  { locale: "de-DE", currency: "CHF", amount: "123.45" },
+  { locale: "en-US", currency: "SEK", amount: "123.45" },
+  { locale: "en-US", currency: "NOK", amount: "123.45" },
   // South East Asia
   { locale: "id-ID", currency: "IDR", amount: "123.45" },
   { locale: "id-ID", currency: "USD", amount: "123.45" },
@@ -31,6 +41,7 @@ const EXAMPLES: Array<{ locale: string; currency: string; amount: string }> = [
   { locale: "fil-PH", currency: "PHP", amount: "123.45" },
   { locale: "th-TH", currency: "THB", amount: "123.45" },
   { locale: "vi-VN", currency: "USD", amount: "123.45" },
+  { locale: "vi-VN", currency: "VND", amount: "123" },
   { locale: "km-KH", currency: "KHR", amount: "123.45" },
   { locale: "lo-LA", currency: "LAK", amount: "123.45" },
   { locale: "my-MM", currency: "MMK", amount: "123.45" },
@@ -169,8 +180,13 @@ function renderExamples(): void {
     localeCell.textContent = example.locale;
 
     const inputCell = document.createElement("td");
-    inputCell.className = "mono";
-    inputCell.textContent = result.display;
+    const inputText = document.createElement("div");
+    inputText.className = "mono";
+    // lang on the input too, so VoiceOver reads the digits and symbol in the
+    // locale voice and the input column can be compared against the spoken one.
+    inputText.lang = example.locale;
+    inputText.textContent = result.display;
+    inputCell.append(inputText);
 
     const spokenCell = document.createElement("td");
     const spokenText = document.createElement("div");
