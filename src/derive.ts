@@ -61,8 +61,22 @@ export function deriveExponent(locale: string, currency: string): number {
   return digits ?? 2;
 }
 
+/**
+ * Integer digits for speech, without grouping. A grouping separator is a
+ * period in several locales (de, es, it, nl, id), and a synthesizer can read
+ * `1.234` as a decimal, so the spoken form omits grouping entirely.
+ */
 export function formatInteger(locale: string, value: bigint): string {
-  return new Intl.NumberFormat(locale, { useGrouping: true, maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat(locale, { useGrouping: false, maximumFractionDigits: 0 }).format(value);
+}
+
+/** The locale's minus sign, for spoken numbers. */
+export function minusSign(locale: string): string {
+  return (
+    new Intl.NumberFormat(locale)
+      .formatToParts(-1)
+      .find((part) => part.type === "minusSign")?.value ?? "-"
+  );
 }
 
 export function selectPlural(locale: string, value: bigint): PluralCategory {

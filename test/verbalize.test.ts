@@ -93,6 +93,20 @@ describe("verbalizeMoney: shape by locale", () => {
   });
 });
 
+describe("subunit resolution", () => {
+  it("prefers the explicit override over the kind word", () => {
+    // zh is split: false, so force the strategy to observe the subunit words
+    // rather than the decimal reading. USD -> override 美分; CNY -> kind fen -> 分.
+    const usd = verbalizeMoney({ amount: 123.45, currency: "USD", locale: "zh-CN" }, { style: "major-minor" });
+    expect(usd.strategy).toBe("major-minor");
+    expect(usd.spoken).toContain("美分");
+
+    const cny = verbalizeMoney({ amount: 123.45, currency: "CNY", locale: "zh-CN" }, { style: "major-minor" });
+    expect(cny.strategy).toBe("major-minor");
+    expect(cny.spoken).toContain("分");
+  });
+});
+
 describe("resolveCurrency", () => {
   it("derives name, exponent and order", () => {
     const resolved = resolveCurrency("SGD", "en-SG");

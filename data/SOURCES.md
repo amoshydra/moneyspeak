@@ -3,6 +3,15 @@
 Verification of every entry in `data/subunits.json` against outside sources.
 Checked 2026-09-21.
 
+> **Model change (2026-09-26).** Subunits are now stored by *kind*, not by
+> currency. `data/subunit-kinds.json` maps each currency to a kind (`USD`, `AUD`,
+> `SGD`, ... -> `cent`; `EUR` -> `eurocent`; `GBP` -> `penny`), and
+> `data/subunits.json` holds the word per language and kind. One word therefore
+> serves every currency that shares the kind, and a currency added to a known
+> kind inherits its words. The per-currency evidence below is unchanged and is
+> still the source for each word; the few per-language exceptions (the `zh` US
+> cent `美分`, the `ta` SGD cent `காசு`) moved to `data/overrides.json`.
+
 Method and caveats:
 
 - ISO 4217 defines only the *number of minor-unit decimal digits*. It does **not**

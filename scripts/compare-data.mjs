@@ -1,7 +1,7 @@
 // Compare the hand-written data against CLDR and ISO 4217.
 //
-//   - plural categories: the draft subunit entries carry { one, other }.
-//     CLDR (via Intl.PluralRules) may require more for the locale.
+//   - plural categories: the draft subunit words carry { one, other }.
+//     CLDR (via Intl.PluralRules) may require more for the language.
 //   - exponent: Intl reports CLDR's display digits, which are not always the
 //     ISO 4217 minor unit.
 //
@@ -13,6 +13,7 @@ import { dirname, join } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const subunits = JSON.parse(readFileSync(join(root, "data/subunits.json"), "utf8")).subunits;
+const kinds = JSON.parse(readFileSync(join(root, "data/subunit-kinds.json"), "utf8")).kinds;
 const overrides = JSON.parse(readFileSync(join(root, "data/overrides.json"), "utf8"));
 
 // ISO 4217 minor units, from the standard's "Minor unit" column.
@@ -26,25 +27,24 @@ const ISO_MINOR_UNITS = {
 const categoriesFor = (locale) =>
   new Intl.PluralRules(locale).resolvedOptions().pluralCategories;
 
-console.log("== plural categories: draft { one, other } vs CLDR ==\n");
+console.log("== plural categories: draft forms vs CLDR ==\n");
 const missing = [];
-for (const [currency, byLocale] of Object.entries(subunits)) {
-  if (byLocale === null) continue;
-  for (const [lang, forms] of Object.entries(byLocale)) {
+for (const [lang, byKind] of Object.entries(subunits)) {
+  for (const [kind, forms] of Object.entries(byKind)) {
     const needed = categoriesFor(lang);
     const have = Object.keys(forms);
     const gaps = needed.filter((category) => !have.includes(category));
     if (gaps.length > 0) {
-      missing.push({ currency, lang, needed, have, gaps });
+      missing.push({ lang, kind, needed, have, gaps });
     }
   }
 }
 if (missing.length === 0) {
-  console.log("  every draft entry covers the CLDR categories for its locale\n");
+  console.log("  every draft entry covers the CLDR categories for its language\n");
 } else {
   for (const row of missing) {
     console.log(
-      `  ${row.currency} ${row.lang}: CLDR needs [${row.needed.join(", ")}], draft has [${row.have.join(", ")}], missing [${row.gaps.join(", ")}]`,
+      `  ${row.lang} ${row.kind}: CLDR needs [${row.needed.join(", ")}], draft has [${row.have.join(", ")}], missing [${row.gaps.join(", ")}]`,
     );
   }
   console.log(`\n  ${missing.length} entry/entries need more categories\n`);
@@ -72,10 +72,26 @@ if (mismatch.length === 0) {
   }
 }
 
-console.log("\n== locale coverage of the subunit draft ==\n");
-const languages = new Set();
-for (const byLocale of Object.values(subunits)) {
-  if (byLocale === null) continue;
-  for (const lang of Object.keys(byLocale)) languages.add(lang);
+console.log("\n== coverage of the subunit model ==\n");
+const languages = Object.keys(subunits).sort();
+console.log(`  languages covered: ${languages.join(", ")}`);
+
+const words = new Set();
+for (const byKind of Object.values(subunits)) {
+  for (const kind of Object.keys(byKind)) words.add(kind);
 }
-console.log(`  languages covered: ${[...languages].sort().join(", ")}`);
+const mappedKinds = new Set();
+const noSubunit = [];
+for (const [currency, kind] of Object.entries(kinds)) {
+  if (kind === null) noSubunit.push(currency);
+  else mappedKinds.add(kind);
+}
+console.log(`  kinds mapped by a currency: ${[...mappedKinds].sort().join(", ")}`);
+console.log(`  currencies with no subunit (exponent 0): ${noSubunit.sort().join(", ")}`);
+
+const wordless = [...mappedKinds].filter((kind) => !words.has(kind)).sort();
+if (wordless.length > 0) {
+  console.log(
+    `  kinds with no word in any language (always fall back): ${wordless.join(", ")}`,
+  );
+}

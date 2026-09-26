@@ -6,6 +6,7 @@ import {
   deriveSymbol,
   formatInteger,
   isLatinScript,
+  minusSign,
   selectPlural,
 } from "./derive.js";
 import { exponentOverride, localeProfile, lookupSubunit, nameOverride } from "./patch.js";
@@ -104,13 +105,28 @@ function minorNumber(locale: string, minor: bigint): string {
   return new Intl.NumberFormat(locale, { useGrouping: false, maximumFractionDigits: 0 }).format(minor);
 }
 
-function displayString(resolved: ResolvedCurrency, amount: number | string | bigint): string {
+function displayString(
+  resolved: ResolvedCurrency,
+  amount: number | string | bigint,
+  minor: bigint,
+): string {
+  // The visible form follows CLDR's convention for the currency (IDR shows no
+  // fractions, KWD shows three), which is not necessarily the speech exponent
+  // we overrode. Raise it only when the amount has a fraction the convention
+  // would round away, so `IDR 123` stays `Rp 123` but `IDR 123.45` keeps its sen.
+  const displayDigits =
+    new Intl.NumberFormat(resolved.locale, {
+      style: "currency",
+      currency: resolved.code,
+    }).resolvedOptions().maximumFractionDigits ?? 0;
+  const fractionDigits = minor !== 0n ? Math.max(displayDigits, resolved.exponent) : displayDigits;
+
   return new Intl.NumberFormat(resolved.locale, {
     style: "currency",
     currency: resolved.code,
     currencyDisplay: "symbol",
-    minimumFractionDigits: resolved.exponent,
-    maximumFractionDigits: resolved.exponent,
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
   }).format(Number(toPlainString(amount)));
 }
 
@@ -118,26 +134,51 @@ const WORD_JOINER = "\u2060";
 
 function decimalNameString(
   resolved: ResolvedCurrency,
-  amount: number | string | bigint,
+  negative: boolean,
+  major: bigint,
+  minor: bigint,
   name: string,
   breakBeforeDecimal: boolean,
 ): string {
-  const parts = new Intl.NumberFormat(resolved.locale, {
+  // Take the shape (order, spacing, literals) from Intl, then substitute our
+  // own digit strings. That keeps the locale's layout while dropping grouping
+  // and avoiding the precision loss of converting the amount to a Number.
+  const template = new Intl.NumberFormat(resolved.locale, {
     style: "currency",
     currency: resolved.code,
     currencyDisplay: "name",
     minimumFractionDigits: resolved.exponent,
     maximumFractionDigits: resolved.exponent,
-  }).formatToParts(Number(toPlainString(amount)));
+  }).formatToParts(1);
 
-  return parts
+  const majorText =
+    (negative ? minusSign(resolved.locale) : "") + formatInteger(resolved.locale, major);
+  const minorText = new Intl.NumberFormat(resolved.locale, {
+    useGrouping: false,
+    minimumIntegerDigits: resolved.exponent,
+    maximumFractionDigits: 0,
+  }).format(minor);
+
+  return template
     .map((part) => {
-      if (part.type === "currency") return name;
-      // A word joiner before the separator stops a screen reader from parsing
-      // the number and reading the "." as an English "point". The synthesizer
-      // then normalizes the number itself, which it already does correctly.
-      if (breakBeforeDecimal && part.type === "decimal") return WORD_JOINER + part.value;
-      return part.value;
+      switch (part.type) {
+        case "integer":
+          return majorText;
+        case "fraction":
+          return minorText;
+        case "currency":
+          return name;
+        case "group":
+          return "";
+        case "decimal":
+          // Only an ASCII "." has the screen-reader bug, and a word joiner
+          // before it stops the number being parsed so the synthesizer
+          // normalizes it itself. Other separators (Arabic U+066B, for example)
+          // are left alone, because TalkBack reads U+2060 aloud.
+          return breakBeforeDecimal && part.value === "." ? WORD_JOINER + part.value : part.value;
+        default:
+          return part.value;
+      }
     })
     .join("");
 }
@@ -209,8 +250,8 @@ export function verbalizeMoney(input: MoneyInput, options: VerbalizeOptions = {}
       spoken = `${sign}${formatInteger(resolved.locale, major)} ${majorName}${join} ${minorText}`;
     }
   } else {
-    spoken = decimalNameString(resolved, input.amount, effectiveName.other, breakBeforeDecimal);
+    spoken = decimalNameString(resolved, negative, major, minor, effectiveName.other, breakBeforeDecimal);
   }
 
-  return { spoken, display: displayString(resolved, input.amount), strategy, warnings };
+  return { spoken, display: displayString(resolved, input.amount, minor), strategy, warnings };
 }

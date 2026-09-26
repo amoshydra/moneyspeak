@@ -61,10 +61,13 @@ DOM helpers, in `moneyspeak/dom`:
 
 Everything derivable comes from `Intl` at runtime: the name (singular and plural), symbol, order, digits and exponent.
 
-Two files hold the rest:
+Three files hold the rest:
 
-- `data/subunits.json` — minor unit names per currency and language. CLDR has none.
-- `data/overrides.json` — exponent corrections, spoken name overrides, and per-locale connector and split settings.
+- `data/subunit-kinds.json` — the subunit **kind** for each currency, e.g. `USD` -> `cent`, `EUR` -> `eurocent`, `GBP` -> `penny`. `null` marks a currency with no subunit (ISO 4217 exponent 0). The kind is the concept, so it is not repeated per currency.
+- `data/subunits.json` — the **word** for each kind per language, e.g. `en` -> `cent` -> `{ one: "cent", other: "cents" }`. One entry serves every currency that shares the kind, so adding a language means adding words, not re-entering "cent" for each currency.
+- `data/overrides.json` — exponent corrections, spoken name overrides, per-locale connector and split settings, and per-locale or per-language **subunit exceptions** (a word that differs from the kind's default, e.g. `zh` -> `USD` -> `美分`).
+
+A subunit is resolved in three tiers, most specific first: an explicit override for the locale, then the language; the currency's kind; and finally the language's word for that kind. An override of `null` means the currency has no subunit, an absent currency kind and a missing word both fall back to the decimal reading.
 
 `pnpm compare:data` checks the subunit plural categories against CLDR and the exponents against ISO 4217. Per-entry sources are in `data/SOURCES.md`.
 

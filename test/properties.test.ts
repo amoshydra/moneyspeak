@@ -52,7 +52,7 @@ describe("invariants", () => {
       currency: "USD",
       locale: "en-US",
     });
-    expect(spoken).toContain("123,456,789,012,345");
+    expect(spoken).toContain("123456789012345");
     expect(spoken).toContain("67");
   });
 

@@ -9,6 +9,14 @@
   "names": {
     "id-ID": { "USD": "dolar Amerika" }
   },
+  "subunits": {
+    "zh": { "USD": { "one": "美分", "other": "美分" } },
+    "ta": { "SGD": { "one": "காசு", "other": "காசு" } },
+    "en": {
+      "NOK": { "one": "øre", "other": "øre" },
+      "DKK": { "one": "øre", "other": "øre" }
+    }
+  },
   "locales": {
     "en": { "connector": "and", "split": true },
     "de": { "connector": "und", "split": true },

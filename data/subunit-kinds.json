@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "status": "draft",
+    "note": "Currency -> subunit kind. The kind is the concept; the word per language lives in data/subunits.json. null means the currency has no subunit (ISO 4217 exponent 0). A currency absent from this file has an unknown kind and falls back to the decimal reading."
+  },
+  "kinds": {
+    "USD": "cent", "AUD": "cent", "CAD": "cent", "NZD": "cent", "TWD": "cent",
+    "HKD": "cent", "SGD": "cent", "ZAR": "cent",
+    "EUR": "eurocent",
+    "GBP": "penny",
+    "CNY": "fen",
+    "INR": "paisa", "PKR": "paisa", "NPR": "paisa",
+    "BDT": "poysha",
+    "THB": "satang",
+    "MYR": "sen", "IDR": "sen",
+    "PHP": "sentimo",
+    "SEK": "ore", "NOK": "ore", "DKK": "ore",
+    "CHF": "franccent",
+    "KWD": "fils", "BHD": "fils", "OMR": "fils", "JOD": "fils", "IQD": "fils",
+    "JPY": null, "KRW": null, "VND": null, "ISK": null
+  }
+}

@@ -184,8 +184,12 @@ function renderExamples(): void {
     inputCell.textContent = result.display;
 
     const spokenCell = document.createElement("td");
-    spokenCell.lang = example.locale;
-    spokenCell.textContent = result.spoken;
+    const spokenText = document.createElement("div");
+    // A block element, not the cell itself: VoiceOver honors lang on a div and
+    // ignores it on inline elements, so the row would read in the page language.
+    spokenText.lang = example.locale;
+    spokenText.textContent = result.spoken;
+    spokenCell.append(spokenText);
 
     const playCell = document.createElement("td");
     const play = document.createElement("button");

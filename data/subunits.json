@@ -1,108 +1,77 @@
 {
   "_meta": {
     "status": "draft",
-    "note": "Subunit names are not in CLDR. Each entry is a claim and should be checked against the currency's issuing authority and the locale's usage before release. Keys are ISO 4217 codes, then BCP 47 language subtags. Plural keys follow CLDR categories; run scripts/compare-data.mjs to check coverage."
+    "note": "Minor unit words keyed by language, then subunit kind. The currency -> kind mapping lives in data/subunit-kinds.json, so a word shared by every cent currency is written once. Subunit names are not in CLDR. Each entry is a claim and should be checked against the currency's issuing authority and the locale's usage before release. Keys are BCP 47 language subtags, then kinds. Plural keys follow CLDR categories; run scripts/compare-data.mjs to check coverage."
   },
   "subunits": {
-    "USD": {
-      "en": { "one": "cent", "other": "cents" },
-      "de": { "one": "Cent", "other": "Cent" },
-      "fr": { "one": "cent", "many": "cents", "other": "cents" },
-      "es": { "one": "centavo", "many": "centavos", "other": "centavos" },
-      "it": { "one": "centesimo", "many": "centesimi", "other": "centesimi" },
-      "nl": { "one": "cent", "other": "cent" },
-      "id": { "one": "sen", "other": "sen" },
-      "ms": { "one": "sen", "other": "sen" },
-      "zh": { "one": "分", "other": "分" },
-      "ja": { "one": "セント", "other": "セント" },
-      "th": { "one": "เซ็นต์", "other": "เซ็นต์" },
-      "ta": { "one": "சதம்", "other": "சதம்" }
+    "en": {
+      "cent": { "one": "cent", "other": "cents" },
+      "eurocent": { "one": "cent", "other": "cents" },
+      "penny": { "one": "penny", "other": "pence" },
+      "fen": { "one": "fen", "other": "fen" },
+      "paisa": { "one": "paisa", "other": "paise" },
+      "satang": { "one": "satang", "other": "satang" },
+      "sen": { "one": "sen", "other": "sen" },
+      "sentimo": { "one": "centavo", "other": "centavos" },
+      "ore": { "one": "öre", "other": "öre" },
+      "franccent": { "one": "centime", "other": "centimes" }
     },
-    "EUR": {
-      "en": { "one": "cent", "other": "cents" },
-      "de": { "one": "Cent", "other": "Cent" },
-      "fr": { "one": "centime", "many": "centimes", "other": "centimes" },
-      "es": { "one": "céntimo", "many": "céntimos", "other": "céntimos" },
-      "it": { "one": "centesimo", "many": "centesimi", "other": "centesimi" },
-      "nl": { "one": "cent", "other": "cent" },
-      "ja": { "one": "セント", "other": "セント" }
+    "de": {
+      "cent": { "one": "Cent", "other": "Cent" },
+      "eurocent": { "one": "Cent", "other": "Cent" },
+      "franccent": { "one": "Rappen", "other": "Rappen" }
     },
-    "GBP": {
-      "en": { "one": "penny", "other": "pence" },
-      "ja": { "one": "ペニー", "other": "ペンス" }
+    "fr": {
+      "cent": { "one": "cent", "many": "cents", "other": "cents" },
+      "eurocent": { "one": "centime", "many": "centimes", "other": "centimes" },
+      "franccent": { "one": "centime", "many": "centimes", "other": "centimes" }
     },
-    "JPY": null,
-    "CNY": {
-      "zh": { "one": "分", "other": "分" },
-      "en": { "one": "fen", "other": "fen" }
+    "es": {
+      "cent": { "one": "centavo", "many": "centavos", "other": "centavos" },
+      "eurocent": { "one": "céntimo", "many": "céntimos", "other": "céntimos" }
     },
-    "TWD": {
-      "zh": { "one": "分", "other": "分" },
-      "en": { "one": "cent", "other": "cents" }
+    "it": {
+      "cent": { "one": "centesimo", "many": "centesimi", "other": "centesimi" },
+      "eurocent": { "one": "centesimo", "many": "centesimi", "other": "centesimi" },
+      "franccent": { "one": "centesimo", "many": "centesimi", "other": "centesimi" }
     },
-    "HKD": {
-      "zh": { "one": "分", "other": "分" },
-      "en": { "one": "cent", "other": "cents" },
-      "ja": { "one": "セント", "other": "セント" }
+    "nl": {
+      "cent": { "one": "cent", "other": "cent" },
+      "eurocent": { "one": "cent", "other": "cent" }
     },
-    "SGD": {
-      "en": { "one": "cent", "other": "cents" },
-      "zh": { "one": "分", "other": "分" },
-      "ms": { "one": "sen", "other": "sen" },
-      "ta": { "one": "காசு", "other": "காசு" },
-      "ja": { "one": "セント", "other": "セント" }
+    "id": {
+      "cent": { "one": "sen", "other": "sen" },
+      "sen": { "one": "sen", "other": "sen" }
     },
-    "MYR": {
-      "en": { "one": "sen", "other": "sen" },
-      "ms": { "one": "sen", "other": "sen" }
+    "ms": {
+      "cent": { "one": "sen", "other": "sen" },
+      "sen": { "one": "sen", "other": "sen" }
     },
-    "IDR": {
-      "id": { "one": "sen", "other": "sen" },
-      "en": { "one": "sen", "other": "sen" }
+    "zh": {
+      "cent": { "one": "分", "other": "分" },
+      "fen": { "one": "分", "other": "分" }
     },
-    "INR": {
-      "en": { "one": "paisa", "other": "paise" },
-      "ta": { "one": "பைசா", "other": "பைசா" }
+    "ja": {
+      "cent": { "one": "セント", "other": "セント" },
+      "eurocent": { "one": "セント", "other": "セント" },
+      "penny": { "one": "ペニー", "other": "ペンス" }
     },
-    "THB": {
-      "th": { "one": "สตางค์", "other": "สตางค์" },
-      "en": { "one": "satang", "other": "satang" }
+    "th": {
+      "cent": { "one": "เซ็นต์", "other": "เซ็นต์" },
+      "satang": { "one": "สตางค์", "other": "สตางค์" }
     },
-    "KRW": null,
-    "VND": null,
-    "AUD": {
-      "en": { "one": "cent", "other": "cents" }
+    "ta": {
+      "cent": { "one": "சதம்", "other": "சதம்" },
+      "paisa": { "one": "பைசா", "other": "பைசா" }
     },
-    "CAD": {
-      "en": { "one": "cent", "other": "cents" },
-      "fr": { "one": "cent", "many": "cents", "other": "cents" }
+    "sv": {
+      "ore": { "one": "öre", "other": "öre" }
     },
-    "NZD": {
-      "en": { "one": "cent", "other": "cents" }
+    "nb": {
+      "ore": { "one": "øre", "other": "øre" }
     },
-    "CHF": {
-      "de": { "one": "Rappen", "other": "Rappen" },
-      "fr": { "one": "centime", "many": "centimes", "other": "centimes" },
-      "it": { "one": "centesimo", "many": "centesimi", "other": "centesimi" },
-      "en": { "one": "centime", "other": "centimes" }
-    },
-    "ZAR": {
-      "en": { "one": "cent", "other": "cents" }
-    },
-    "PHP": {
-      "en": { "one": "centavo", "other": "centavos" }
-    },
-    "SEK": {
-      "sv": { "one": "öre", "other": "öre" },
-      "en": { "one": "öre", "other": "öre" }
-    },
-    "NOK": {
-      "nb": { "one": "øre", "other": "øre" },
-      "en": { "one": "øre", "other": "øre" }
-    },
-    "DKK": {
-      "da": { "one": "øre", "other": "øre" },
-      "en": { "one": "øre", "other": "øre" }
+    "da": {
+      "ore": { "one": "øre", "other": "øre" }
     }
   }
 }
