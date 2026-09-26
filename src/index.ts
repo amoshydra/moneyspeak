@@ -9,5 +9,6 @@ export type {
   Result,
   Source,
   Strategy,
+  Stringable,
   VerbalizeOptions,
 } from "./types.js";

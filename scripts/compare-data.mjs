@@ -24,14 +24,17 @@ const ISO_MINOR_UNITS = {
   USD: 2, EUR: 2, GBP: 2, JPY: 0, CNY: 2, TWD: 2, HKD: 2, SGD: 2, MYR: 2,
   IDR: 2, INR: 2, THB: 2, KRW: 0, VND: 0, AUD: 2, CAD: 2, NZD: 2, CHF: 2,
   ZAR: 2, PHP: 2, SEK: 2, NOK: 2, DKK: 2, KWD: 3, CLF: 4, ISK: 0,
-  LKR: 2, KHR: 2, LAK: 2, MMK: 2,
+  LKR: 2, KHR: 2, LAK: 2, MMK: 2, PKR: 2, NPR: 2, BDT: 2,
 };
 
 // Currencies where ISO 4217 names a minor unit that is no longer in use, so the
-// spoken form deliberately has none and CLDR's 0 is kept.
+// spoken form deliberately has none and CLDR's 0 is kept. PKR keeps a `paisa`
+// kind entry, which is inert while the exponent is 0: it records the concept,
+// not a unit anyone says.
 const NO_SUBUNIT_IN_PRACTICE = {
   LAK: "the att is no longer in regular use",
   MMK: "the pya is no longer in regular use",
+  PKR: "the paisa is no longer in regular use",
 };
 
 // Summary problems are counted so the script can gate CI rather than only print.
@@ -93,6 +96,13 @@ if (mismatch.length === 0) {
   }
 }
 
+// A non-null kind for a currency with no minor unit is inert; that is fine only
+// where the subunit is genuinely out of use and recorded here.
+const INERT_KIND_BY_DESIGN = {
+  PKR: "the paisa is out of use, so the kind is carried but never spoken",
+  IQD: "the fils is out of use, so the kind is carried but never spoken",
+};
+
 console.log("\n== coverage of the subunit model ==\n");
 const languages = Object.keys(subunits).sort();
 console.log(`  languages covered: ${languages.join(", ")}`);
@@ -109,6 +119,31 @@ for (const [currency, kind] of Object.entries(kinds)) {
 }
 console.log(`  kinds mapped by a currency: ${[...mappedKinds].sort().join(", ")}`);
 console.log(`  currencies with no subunit (exponent 0): ${noSubunit.sort().join(", ")}`);
+
+// Cross-check the kind table against the exponent: a null kind for a currency
+// that has a minor unit, or a kind that can never fire because the exponent is
+// 0, is a data error unless it is recorded as deliberate.
+const inert = [];
+for (const [currency, kind] of Object.entries(kinds)) {
+  const intlDigits =
+    new Intl.NumberFormat("en", { style: "currency", currency }).resolvedOptions()
+      .maximumFractionDigits ?? 0;
+  // The exponent the library actually uses, override included.
+  const digits = overrides.exponent?.[currency] ?? intlDigits;
+  if (kind === null && digits > 0) {
+    console.log(`  ${currency}: kind is null but the exponent is ${digits}`);
+    problems += 1;
+  }
+  if (kind !== null && digits === 0) {
+    if (INERT_KIND_BY_DESIGN[currency]) {
+      inert.push(currency);
+    } else {
+      console.log(`  ${currency}: kind "${kind}" can never be spoken (exponent 0)`);
+      problems += 1;
+    }
+  }
+}
+if (inert.length > 0) console.log(`  inert kinds by design: ${inert.join(", ")}`);
 
 const wordless = [...mappedKinds].filter((kind) => !words.has(kind)).sort();
 const named = new Set(Object.keys(kindNames));

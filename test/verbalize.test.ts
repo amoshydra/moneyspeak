@@ -119,9 +119,33 @@ describe("subunit resolution", () => {
 });
 
 describe("guards", () => {
-  it("warns when a code has no CLDR name", () => {
+  it("warns when the spoken form contains the ISO code", () => {
     const result = verbalizeMoney({ amount: 123.45, currency: "ZZZ", locale: "en-US" });
-    expect(result.warnings.join(" ")).toContain("no currency name");
+    expect(result.warnings.join(" ")).toContain("contains the ISO code");
+  });
+
+  it("uses the name, not the symbol, in a locale that renders both", () => {
+    // CLDR's Turkish name format is symbol-then-name, so taking the first
+    // currency part made the name "$" and the spoken form "123 $".
+    expect(resolveCurrency("USD", "tr-TR").name.other).toBe("ABD doları");
+    const result = verbalizeMoney({ amount: 123.45, currency: "USD", locale: "tr-TR" });
+    expect(result.spoken).toContain("ABD doları");
+    expect(result.spoken).not.toContain("$");
+  });
+
+  it("warns when the name embeds the code", () => {
+    const result = verbalizeMoney({ amount: 123, currency: "XSU", locale: "ro-RO" });
+    expect(result.warnings.join(" ")).toContain("contains the ISO code");
+  });
+
+  it("keeps every digit of a large amount in display", () => {
+    const result = verbalizeMoney({ amount: "99999999999999.99", currency: "USD", locale: "en-US" });
+    expect(result.spoken).toContain("99999999999999");
+    expect(result.display).toBe("$99,999,999,999,999.99");
+  });
+
+  it("treats a sub-micro amount as zero rather than throwing", () => {
+    expect(verbalizeMoney({ amount: 1e-7, currency: "USD", locale: "en-US" }).spoken).toBe("0 US dollars");
   });
 
   it("does not print a negative zero", () => {
@@ -132,6 +156,22 @@ describe("guards", () => {
     expect(verbalizeMoney({ amount: 1e21, currency: "USD", locale: "en-US" }).spoken).toContain(
       "1000000000000000000000",
     );
+  });
+
+  it("reads any value through toString, exactly", () => {
+    // A decimal library value, a number, a string and a bigint all agree.
+    const decimal = { toString: () => "123.45" };
+    const expected = "123 US dollars and 45 cents";
+    expect(verbalizeMoney({ amount: decimal, currency: "USD", locale: "en-US" }).spoken).toBe(expected);
+    expect(verbalizeMoney({ amount: 123.45, currency: "USD", locale: "en-US" }).spoken).toBe(expected);
+    expect(verbalizeMoney({ amount: "123.45", currency: "USD", locale: "en-US" }).spoken).toBe(expected);
+  });
+
+  it("expands exponential notation the same way for a number, a string and a bigint", () => {
+    const expected = "1000000000000000000000 US dollars";
+    expect(verbalizeMoney({ amount: 1e21, currency: "USD", locale: "en-US" }).spoken).toBe(expected);
+    expect(verbalizeMoney({ amount: "1e21", currency: "USD", locale: "en-US" }).spoken).toBe(expected);
+    expect(verbalizeMoney({ amount: 10n ** 21n, currency: "USD", locale: "en-US" }).spoken).toBe(expected);
   });
 });
 

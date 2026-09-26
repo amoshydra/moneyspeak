@@ -1,7 +1,7 @@
 # Subunit name verification
 
 Verification of every entry in `data/subunits.json` against outside sources.
-Checked 2026-09-21.
+Checked 2026-09-21, extended 2026-09-26.
 
 > **Model change (2026-09-26).** Subunits are now stored by *kind*, not by
 > currency. `data/subunit-kinds.json` maps each currency to a kind (`USD`, `AUD`,
@@ -144,7 +144,7 @@ where the dictionary records both forms. CLDR's `ja` plural rule has only the
 | HKD | ja | one `セント`, other `セント` | confirmed | https://ja.wikipedia.org/wiki/香港ドル | "補助通貨単位はセント（Cent・略符号は￠）・ミル（mil）で、1ドル=100セント=1000ミル". |
 | SGD | ja | one `セント`, other `セント` | confirmed | https://ja.wikipedia.org/wiki/シンガポールドル | "補助単位はドルの100分の1のシンガポール・セント(単位記号 S￠)". |
 | THB | th | one `สตางค์`, other `สตางค์` | confirmed | https://en.wikipedia.org/wiki/Thai_baht | Already present: "divided into 100 satang (สตางค์)". The Thai part is read as บาท + สตางค์, not with จุด ("point"); see https://elon.io/grammar/thai/numbers/currency. |
-| CNY | ja | (none) | no source | https://ja.wikipedia.org/wiki/人民元 | Deliberately omitted. The yuan's 1/100 unit is `分` (`フェン`), not `セント`, and Japanese usage is not settled enough to assert a money reading. `ja-JP` + `CNY` therefore falls back to `decimal-name`; the fallback is pinned by a test. |
+| CNY | ja | (none) | no source | https://ja.wikipedia.org/wiki/人民元 | Deliberately omitted. The yuan's 1/100 unit is `分` (`フェン`), not `セント`, and Japanese usage is not settled enough to assert a money reading. `ja-JP` + `CNY` therefore resolves through the kind's international name (`fen`), not a Japanese word. |
 
 ## Sources
 
@@ -389,6 +389,7 @@ and noted.
 
 ### Note (data-only constraint)
 
-`test/verbalize.test.ts:109` still carries the comment "ko has no cent entry";
-the assertion still holds (a `ko` subunit exists, the strategy is
-`major-minor`), so no test change was required. The comment is now stale.
+The stale "ko has no cent entry" comment in `test/verbalize.test.ts` was corrected
+in a later pass: the test now asserts that a curated language uses its own word
+(`ko-KR` `USD` -> `센트`), and that an uncurated kind uses the international name
+(`ko-KR` `SEK` -> `øre`).

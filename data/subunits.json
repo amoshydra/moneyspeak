@@ -157,6 +157,9 @@
     "km": {
       "cent": { "other": "សេន" },
       "sen": { "other": "សេន" }
+    },
+    "tr": {
+      "kurus": { "one": "kuruş", "other": "kuruş" }
     }
   }
 }

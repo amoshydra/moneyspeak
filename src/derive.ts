@@ -15,6 +15,12 @@ export function canonicalLocale(locale?: string): string {
  * Zero fraction digits is deliberate: with the default `.00` every value is
  * plural, so `format(1)` would never yield the singular form.
  */
+/**
+ * The name part of a formatted currency, which is not always the first one: in
+ * Turkish, CLDR renders the symbol before the name (`$` then `ABD doları`), and
+ * for code-first currencies the code comes before the name too. The name is the
+ * last currency part.
+ */
 function currencyPart(locale: string, currency: string, value: number, fractionDigits: number): string {
   const fmt = new Intl.NumberFormat(locale, {
     style: "currency",
@@ -23,7 +29,16 @@ function currencyPart(locale: string, currency: string, value: number, fractionD
     minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits,
   });
-  return fmt.formatToParts(value).find((part) => part.type === "currency")?.value ?? "";
+  const parts = fmt.formatToParts(value).filter((part) => part.type === "currency");
+  return parts.at(-1)?.value ?? "";
+}
+
+/** Index of the last currency part, which is the name. */
+function namePartIndex(parts: Intl.NumberFormatPart[]): number {
+  for (let i = parts.length - 1; i >= 0; i -= 1) {
+    if (parts[i]?.type === "currency") return i;
+  }
+  return -1;
 }
 
 // Sample values used to obtain each CLDR plural form of a currency name. The
@@ -78,7 +93,7 @@ export function deriveOrder(locale: string, currency: string): "prefix" | "suffi
     currency,
     currencyDisplay: "name",
   }).formatToParts(1);
-  const currencyIndex = parts.findIndex((part) => part.type === "currency");
+  const currencyIndex = namePartIndex(parts);
   const integerIndex = parts.findIndex((part) => part.type === "integer");
   if (currencyIndex === -1 || integerIndex === -1) return "suffix";
   return currencyIndex < integerIndex ? "prefix" : "suffix";

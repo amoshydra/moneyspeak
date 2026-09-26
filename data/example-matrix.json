@@ -7,13 +7,13 @@
     "en-US", "en-GB", "en-IN", "en-SG", "en-MY", "en-PH",
     "de-DE", "fr-FR", "es-ES", "it-IT", "nl-NL",
     "id-ID", "ms-MY", "fil-PH", "th-TH", "vi-VN",
-    "zh-CN", "zh-TW", "zh-HK", "yue-HK", "ja-JP", "ko-KR",
+    "zh-CN", "zh-TW", "zh-HK", "yue-HK", "ja-JP", "ko-KR", "tr-TR",
     "hi-IN", "ta-IN", "te-IN", "ml-IN", "kn-IN", "mr-IN", "gu-IN", "pa-IN",
     "bn-BD", "ne-NP", "ur-PK", "km-KH", "lo-LA", "my-MM"
   ],
   "currencies": [
     "USD", "SGD", "EUR", "GBP", "JPY", "CNY", "TWD", "HKD",
     "KRW", "MYR", "IDR", "THB", "VND", "PHP", "INR", "BDT",
-    "NPR", "PKR", "LKR", "KHR", "LAK", "MMK", "KWD"
+    "NPR", "PKR", "LKR", "KHR", "LAK", "MMK", "KWD", "TRY"
   ]
 }

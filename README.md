@@ -22,7 +22,7 @@ verbalizeMoney({ amount: 123.45, currency: "SGD", locale: "en-US" });
 
 | `input` | |
 | --- | --- |
-| `amount` | `number \| string \| bigint`, in major units |
+| `amount` | anything whose `toString` yields a plain decimal: a `string`, `number`, `bigint`, or a decimal library value. A string is exact. |
 | `currency` | ISO 4217 code |
 | `locale` | BCP 47 tag, defaults to the runtime locale |
 
@@ -69,7 +69,7 @@ A subunit resolves from the language's word for the currency's kind, or, when th
 
 Everything derivable comes from `Intl` at runtime: the name (singular and plural), symbol, order, digits and exponent.
 
-Three files hold the rest:
+Three files hold the resolution data:
 
 - `data/subunit-kinds.json` — the subunit **kind** for each currency (`USD` -> `cent`, `EUR` -> `eurocent`, `GBP` -> `penny`), and the **international name** for each kind. `null` marks a currency with no subunit. The kind is the concept, so it is not repeated per currency.
 - `data/subunits.json` — the **word** for each kind per language, e.g. `en` -> `cent` -> `{ one: "cent", other: "cents" }`. One entry serves every currency that shares the kind, so adding a language means adding words, not re-entering "cent" for each currency.
@@ -95,7 +95,8 @@ The decimal reading is left for a currency whose kind is unknown.
 - One minor unit per currency. Intermediate units (`jiao`, `dime`) are not modelled, because no synthesizer verbalizes them.
 - When a language has no word for a kind, the reading uses the kind's international name, which can put a non-native word inside another language: Korean with a Swedish krona reads `1 스웨덴 크로나 5 øre`, and Hindi with a Swiss franc reads `1 स्विस फ़्रैंक 5 centimes`. It keeps the reading major-plus-minor instead of dropping to the decimal, and `data/subunits.json` is where a language's own word replaces it.
 - The integer digits are left to the engine. The decimal separator is not. VoiceOver parsed the number itself and read an ASCII `.` as an English "point" even with a Chinese or Japanese voice, and `lang` only selects the voice. Measured: macOS 26.5.2 still does, iOS 27 no longer does. An opt-in workaround, `{ decimalBreak: "auto" }`, inserts an invisible word joiner (`U+2060`) before an ASCII `.` for non-Latin scripts, which stops the parsing so the synthesizer normalizes the number itself; measured on macOS 26.5.2 it turns `123.45人民币` from an English "point" into 点四五. It is **off by default**, because it is harmful elsewhere: on Google TTS it drops the fractional part (`123<wj>.45人民币` reads 一百二十三人民币), and TalkBack reads `U+2060` aloud as "word joiner".
-- Measured on VoiceOver (macOS 26.5.2), in item navigation over block elements carrying `lang`: the major-plus-minor and major-only renders read correctly for `en-US`, `ja-JP`, `th-TH`, `ko-KR`, `hi-IN`, `id-ID`, `de-DE` and `fr-FR`. Read-all (`VO+A`) ignores `lang`, so it is not a valid check for a multi-language page.
+- Amounts beyond `Number.MAX_SAFE_INTEGER` keep their digits in `spoken` and `display`, but the plural of the currency name is chosen through `Intl.PluralRules`, which coerces to a Number: a very large amount in a language with rich plurals (Russian, Polish, Arabic) can therefore take the wrong form. Pass a value within safe-integer range if that matters.
+- Verified on VoiceOver (macOS 26.5.2), in item navigation over block elements carrying `lang`: the major-plus-minor and major-only renders read correctly for `en-US`, `ja-JP`, `th-TH`, `ko-KR`, `hi-IN`, `id-ID`, `de-DE` and `fr-FR`. Read-all (`VO+A`) ignores `lang`, so it is not a valid check for a multi-language page.
 - Measured on Google TTS (`com.google.android.tts`, OnePlus 6T, Android 15): the fifteen locale renders all read the minor unit with no "point". On that build the bare codes `USD123.45`, `SGD123.45` and `CNY123.45` are named correctly too, so the library's value there is consistency, not a rescue. The engines that spell a code out are the ones the corpus documented.
 
 ## Develop

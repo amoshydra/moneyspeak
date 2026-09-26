@@ -1,6 +1,19 @@
+/**
+ * Anything whose `toString` yields a plain decimal string. `string`, `number`,
+ * `bigint`, and decimal-library values all satisfy this.
+ */
+export interface Stringable {
+  toString(): string;
+}
+
 export interface MoneyInput {
-  /** Amount in major units, e.g. `123.45`. Use a string or bigint for very large values. */
-  amount: number | string | bigint;
+  /**
+   * Amount in major units. A `string` is the safest, because it is exact. A
+   * `number`, `bigint`, or any value with a `toString` that yields a plain
+   * decimal (including a decimal library's value) also works; the library
+   * always reads it as text, never through `Number`.
+   */
+  amount: Stringable;
   /** ISO 4217 code, e.g. `"SGD"`. */
   currency: string;
   /** BCP 47 tag. Defaults to the runtime locale. */
@@ -48,6 +61,8 @@ export interface ResolvedCurrency {
   exponent: number;
   name: PluralForms;
   subunit: PluralForms | null;
+  /** Whether the locale's currency display name comes before the number.
+   *  Informational: the spoken builders place the name after the number. */
   order: "prefix" | "suffix";
   /** Whether this locale naturally splits an amount into major and minor units. */
   split: boolean;

@@ -15,6 +15,7 @@
     "sentimo": { "one": "sentimo", "other": "sentimo" },
     "ore": { "one": "øre", "other": "øre" },
     "franccent": { "one": "centime", "other": "centimes" },
+    "kurus": { "one": "kuruş", "other": "kuruş" },
     "fils": { "one": "fils", "other": "fils" }
   },  "kinds": {
     "USD": "cent",
@@ -42,6 +43,7 @@
     "NOK": "ore",
     "DKK": "ore",
     "CHF": "franccent",
+    "TRY": "kurus",
     "KWD": "fils",
     "BHD": "fils",
     "OMR": "fils",

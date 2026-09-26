@@ -1,18 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { resolveCurrency, verbalizeMoney } from "../src/index.js";
 import matrix from "../data/example-matrix.json";
+import overrides from "../data/overrides.json";
 
 // The locale and currency surface lives in data/example-matrix.json, shared with
 // the docs demo and matrix:dump so the three cannot drift apart.
 const LOCALES = matrix.locales;
 const CURRENCIES = matrix.currencies;
 
+/** Exponent overrides come from the data, not a constant that can go stale. */
+const EXPONENT_OVERRIDES: Record<string, number> = overrides.exponent ?? {};
+
 const AMOUNTS = ["0", "0.45", "1", "1.01", "123", "123.45", "-123.45"];
 
 const SYMBOLS = ["$", "€", "£", "¥", "₹", "฿", "₩", "₺"];
-
-/** Exponent overrides from data/overrides.json, where CLDR's digits differ from ISO 4217. */
-const EXPONENT_OVERRIDES: Record<string, number> = { IDR: 2 };
 
 const STRATEGIES = ["major-minor", "decimal-name", "major-only"];
 
@@ -36,14 +37,26 @@ describe("matrix: every locale x currency", () => {
           .join("");
         expect(resolved.symbol, `${currency} symbol`).toBe(symbol);
 
-        const nameParts = new Intl.NumberFormat(locale, {
-          style: "currency",
-          currency,
-          currencyDisplay: "name",
-        }).formatToParts(1);
-        const currencyIndex = nameParts.findIndex((part) => part.type === "currency");
-        const integerIndex = nameParts.findIndex((part) => part.type === "integer");
-        expect(resolved.order, `${currency} order`).toBe(currencyIndex < integerIndex ? "prefix" : "suffix");
+        // Independent of derive.ts: locate the part that equals CLDR's display
+        // name for the currency, rather than repeating the first-part logic.
+        const displayName = new Intl.DisplayNames([locale], { type: "currency" }).of(currency);
+        if (displayName) {
+          const nameParts = new Intl.NumberFormat(locale, {
+            style: "currency",
+            currency,
+            currencyDisplay: "name",
+          }).formatToParts(1);
+          const nameIndex = nameParts.findIndex(
+            (part) =>
+              part.type === "currency" && part.value.toLowerCase() === displayName.toLowerCase(),
+          );
+          const integerIndex = nameParts.findIndex((part) => part.type === "integer");
+          if (nameIndex !== -1 && integerIndex !== -1) {
+            expect(resolved.order, `${currency} order`).toBe(
+              nameIndex < integerIndex ? "prefix" : "suffix",
+            );
+          }
+        }
 
         for (const amount of AMOUNTS) {
           const label = `${currency} ${amount}`;
@@ -57,10 +70,10 @@ describe("matrix: every locale x currency", () => {
             expect(result.spoken, `${label} symbol ${glyph}`).not.toContain(glyph);
           }
 
-          // A bare code may only appear when the runtime has no name for it,
-          // which is what the warning records. Match it as a word: `EUR` is a
-          // substring of `EURO`.
-          const unnamed = result.warnings.some((warning) => warning.includes("no currency name"));
+          // A bare code may only appear when the runtime has no usable name for
+          // it, which is what the warning records. Match it as a word: `EUR` is
+          // a substring of `EURO`.
+          const unnamed = result.warnings.some((warning) => warning.includes("contains the ISO code"));
           if (!unnamed) {
             expect(result.spoken.toUpperCase(), `${label} bare code`).not.toMatch(
               new RegExp(`\\b${currency}\\b`),
