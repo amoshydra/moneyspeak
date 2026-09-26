@@ -21,10 +21,10 @@ export interface VerbalizeOptions {
   /**
    * VoiceOver workaround, off by default. `"auto"` inserts an invisible word
    * joiner (U+2060) before an ASCII "." for non-Latin scripts, which stops
-   * VoiceOver on affected macOS and iOS 26 versions reading the "." as an
-   * English "point". Kept off because it is harmful elsewhere: measured on
-   * Google TTS it drops the fractional part entirely (`123<wj>.45人民币` reads
-   * `一百二十三人民币`), and TalkBack reads U+2060 aloud as "word joiner".
+   * VoiceOver reading the "." as an English "point". Measured on macOS 26.5.2
+   * it turns `123.45人民币` into 点四五, and iOS 27 no longer needs it.
+   * Kept off because it is harmful elsewhere: on Google TTS it drops the
+   * fractional part entirely, and TalkBack reads U+2060 aloud as "word joiner".
    */
   decimalBreak?: "auto" | "none";
   /** BCP 47 tag; overrides `input.locale`. */
