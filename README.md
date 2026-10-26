@@ -1,6 +1,22 @@
 # moneyspeak
 
+[![npm](https://img.shields.io/npm/v/moneyspeak.svg)](https://www.npmjs.com/package/moneyspeak)
+[![License](https://img.shields.io/github/license/amoshydra/moneyspeak.svg)](LICENSE)
+[![Node.js](https://img.shields.io/node/v/moneyspeak.svg)](https://nodejs.org/)
+[![Docs](https://img.shields.io/badge/docs-live-blue.svg)](https://amoshydra.github.io/moneyspeak/)
+
 Turn a currency amount into a string a speech synthesizer reads correctly.
+
+## Install
+
+```bash
+npm install moneyspeak
+# or
+pnpm add moneyspeak
+```
+
+Requires Node.js 20 or newer at runtime. The documentation site is at
+https://amoshydra.github.io/moneyspeak/.
 
 Engines read numbers fine and currency codes badly: `USD123.45` becomes "US dollars" on some, `SGD123.45` is spelled out on others. `verbalizeMoney` returns the words and leaves the digits to the engine.
 
@@ -102,14 +118,18 @@ The decimal reading is left for a currency whose kind is unknown.
 ## Develop
 
 ```bash
+# Development uses Node.js 22.13+ and pnpm 11.10+
 pnpm install
 pnpm test          # vitest, includes the full locale x currency matrix
 pnpm build         # tsdown, ESM and CJS
 pnpm typecheck     # tsc --noEmit
+pnpm lint:package  # publint, checks the packed manifest and exports
+pnpm lint:types    # attw, checks the published type resolution
 pnpm docs          # Vite docs app
 pnpm smoke         # pack, install the tarball, load it as a consumer would
 pnpm compare:data  # data vs CLDR and ISO 4217, exits non-zero on a gap
 pnpm matrix:dump   # full matrix for review when the runtime or data changes
+pnpm check         # run the full validation suite
 ```
 
-MIT
+MIT. See [LICENSE](LICENSE).
